@@ -1,0 +1,23 @@
+#main {
+    display:grid;
+    grid-template-columns: min-content auto;
+    column-gap: 3em;
+}
+
+#rulearea {
+    display: grid;
+    grid-template-rows: min-content min-content min-content;
+
+}
+#conditionform {
+    margin-top: 3em;
+    display:grid;
+    grid-template-columns: auto auto auto;
+    row-gap: 3em;
+}
+
+#searchingchecks {
+    display: grid;
+    grid-template-columns: min-content min-content min-content;
+    column-gap: 1em;
+}

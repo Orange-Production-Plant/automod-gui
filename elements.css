@@ -5,29 +5,28 @@
     box-sizing: border-box;
 }
 
-
-#main {
-    display:grid;
-
-    grid-template-columns: auto auto;
+.sectionlabel {
+    font-weight: bold;
+    font-size: small;
 }
 
 .container {
     padding: 1vw 1vw 1vw 1vw
 }
+
 .listview {
     max-width: 25vw;
     max-height: 90vh;
-    
-    width:fit-content;
 
-    background-color: rgb(243, 243, 243);
-    
-    border: 2px black solid;
+    width: max-content;
+
+    background-color: rgb(243, 243, 243); 
+    border: 1px black solid;
     
     overflow-x: auto;
     overflow-y: auto;
 }
+
 .buttonlist {
     width: fit-content;
     height: fit-content;
@@ -42,11 +41,30 @@
     border-radius: 1px;
     user-select: none;
 }
-
 .listbutton:hover {
     background-color: gray;
 }
-
 .listbutton:active {
     background-color: rgb(224, 165, 0);
+}
+
+.checklist {
+    box-sizing: border-box;
+    width: fit-content;
+    height: fit-content;
+    list-style-type: none;
+}
+.checklist-button {
+    margin-right: 4px;
+}
+.checklist-element {
+    padding: 0.2em;
+    margin:  0em 0 0.1em 0;
+    
+    border-radius: 1px;
+    user-select: none;
+}
+.checklist-label {
+    font-size: small;
+    user-select: none;
 }

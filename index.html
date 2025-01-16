@@ -1,31 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Automod Rules Editor</title>
-    <script src="index.js" defer></script>
-    <link rel="stylesheet" href="main.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+	<title>Automod Rules Editor</title>
+	<script src="structure.js" defer></script>
+	<script src="index.js" defer></script>
+	<script src="elements.js" defer></script>
+	<link rel="stylesheet" href="layout.css">
+	<link rel="stylesheet" href="elements.css">
 </head>
 <body>
-    <header class="container">
-        <h1>Automod rules editor</h1>
-    </header>
-    <main id="main">
-        <section class="container">
-            <h3>Rules</h3>
-            <div class="listview">
-                <ul id="filelist" class="buttonlist">
-                    <!--fills with text-->
-                </ul>
-            </div>
-        </section>
-        <div id="mainform" class="container">
-            <div class="container">
+	<header class="container">
+		<h1>Automod rules editor</h1>
+	</header>
+	<main id="main">
+		<section id="rulelist" class="container">
+			<h3>Rules</h3>
+			<div class="listview">
+				<ul id="filelist" class="buttonlist">
+					<!--fills with filename-->
+				</ul>
+			</div>
+		</section>
+		<section id="rulearea" class="container">
+			<h3>Conditions and actions</h3>
+			<div id="conditionform">
+				<div> <!-- First column -->
+					<h5 class="sectionlabel">Post type to match</h5>
+					<div class="listview">
+						<ul id="itemtype" class="checklist">
+							<li is="checklist-element" data-id="comment">Comment</li>
+							<li is="checklist-element" data-id="text">Text post</li>
+							<li is="checklist-element" data-id="link">Link post</li>
+							<li is="checklist-element" data-id="gallery">Gallery post</li>
+							<li is="checklist-element" data-id="poll">Poll post</li>
+							<li is="checklist-element" data-id="crosspost">Crosspost</li>
+						</ul>
+					</div>
+					<br> <br>
+					<input id="nme" name="nme" class="checklist-button" type="checkbox"><label for="nme" class="checklist-label">Apply to moderators</label>
+					
+				</div>
+				<div> <!-- Second column -->
+					
+					<div id="searchingchecks">
+						<div>
+							<h5 class="sectionlabel">Fields to match</h5>
+							<div class="listview">
+								<ul id="fields" class="checklist">
+									<li is="checklist-element" data-id="id">Post ID</li>
+									<li is="checklist-element" data-id="title">Title</li>
+									<li is="checklist-element" data-id="domain">Domain name</li>
+									<li is="checklist-element" data-id="url">URL</li>
+									<li is="checklist-element" data-id="body">Body text</li>
+									<li is="checklist-element" data-id="flair_text">Flair text</li>
+									<li is="checklist-element" data-id="flair_css_class">Flair CSS class</li>
+									<li is="checklist-element" data-id="flair_template_id">Flair template ID</li>
+									<li is="checklist-element" data-id="poll_option_text">Poll option text</li>
+									<li is="checklist-element" data-id="poll_option_count">Poll option count</li>
+								 </ul>
+							</div>
+						</div>
+						
+						<div>
+							<h5 class="sectionlabel">Matching method</h5>
+							<div class="listview">
+								<ul id="matchtype">
+									<li is="checklist-element" data-id="includes">Includes</li>
+									<li is="checklist-element" data-id="includes-word">Includes word</li>
+									<li is="checklist-element" data-id="starts-with">Starts with</li>
+									<li is="checklist-element" data-id="ends-with">Ends with</li>
+									<li is="checklist-element" data-id="full-exact">Is exactly</li>
+									<li is="checklist-element" data-id="full-text">Is exactly (trimmed)</li>
+									<li is="checklist-element" data-id="case-sensitive">Case sensitive</li>
+									<li is="checklist-element" data-id="regex">Regex</li>
+								</ul>
+							</div>
+						</div>
+						<div>
+							<label class="sectionlabel" for="fieldmatch">Text to match</label>
+							<input id="fieldmatch" type="text">
+						</div>
+					</div>
+				</div>
+				<div> <!-- Third column -->
 
-            </div>
-        </div>
-    </main>
+				</div>
+			</div>
+		</section>
+	</main>
 </body>
 </html>
