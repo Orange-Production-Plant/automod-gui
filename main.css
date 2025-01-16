@@ -1,0 +1,52 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+#main {
+    display:grid;
+
+    grid-template-columns: auto auto;
+}
+
+.container {
+    padding: 1vw 1vw 1vw 1vw
+}
+.listview {
+    max-width: 25vw;
+    max-height: 90vh;
+    
+    width:fit-content;
+
+    background-color: rgb(243, 243, 243);
+    
+    border: 2px black solid;
+    
+    overflow-x: auto;
+    overflow-y: auto;
+}
+.buttonlist {
+    width: fit-content;
+    height: fit-content;
+    list-style-type: none;
+}
+.listbutton {
+    padding: 0.5em;
+    margin:  0em 0 0.1em 0;
+    
+    max-height: 2em;
+    
+    border-radius: 1px;
+    user-select: none;
+}
+
+.listbutton:hover {
+    background-color: gray;
+}
+
+.listbutton:active {
+    background-color: rgb(224, 165, 0);
+}
