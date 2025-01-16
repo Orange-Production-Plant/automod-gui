@@ -56,6 +56,7 @@
 }
 .checklist-button {
     margin-right: 4px;
+    vertical-align: middle;
 }
 .checklist-element {
     padding: 0.2em;

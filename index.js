@@ -31,6 +31,15 @@ function selectFile(event) {
 
 		let fileContents = fs.readFileSync(path.join(sourcePath, fileList[selectedFile].join(".")), {encoding:"utf8"});
     	let a = yaml.parse(fileContents);
+		
+		
+
+		for (let entry of Object.entries(a)) {
+			if (isSearchCheck(entry[0])) {
+				let d = deserialiseSearchCheck(entry[0]);
+				console.log(d);
+			}
+		}
 	}
 }
 
@@ -40,11 +49,8 @@ function selectFile(event) {
  * @param {object} idObject 
  */
 function buildChecklist(rootElement, idObject) {
-	
 	let lastLi;
-	
 	for (let entry of Object.entries(idObject)) {
-		console.log(entry);
 		const id = entry[0];
 		const labelText = entry[1];
 
@@ -52,13 +58,35 @@ function buildChecklist(rootElement, idObject) {
 
 		li.dataset.id = id;
 		li.innerText = labelText;
+
 		rootElement.appendChild(li);
 		lastLi = li;
 	}
 
 	lastLi.style.marginBottom = 0;
-	
-	
+}
+/**
+ * 
+ * @param {HTMLUListElement} rootElement 
+ * @param {object} valueObject 
+ */
+function buildRadiolist(rootElement, valueObject) {
+	let lastLi;
+	for (let entry of Object.entries(valueObject)) {
+		const value = entry[0];
+		const labelText = entry[1];
+
+		let li = new RadiolistElement();
+
+		li.dataset.value = value;
+		li.innerText = labelText;
+
+
+		rootElement.appendChild(li);
+		lastLi = li;
+	}
+
+	lastLi.style.marginBottom = 0;
 }
 
 
@@ -108,7 +136,8 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
 
 	buildChecklist(document.getElementById("fields"), searchFields);
-	
+	buildRadiolist(document.getElementById("matchtype"), searchMethods);
+	buildChecklist(document.getElementById("matchmodifier"), searchModifiers);
 
 })
 
