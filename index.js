@@ -13,6 +13,8 @@ let selectedFile = 1;
 let sourcePath = "";
 
 
+let ruleContext = new RuleContext();
+
 
 /**
  * 
@@ -30,16 +32,34 @@ function selectFile(event) {
 		fileListElements[selectedFile].style.backgroundColor = "rgb(224, 165, 0)";
 
 		let fileContents = fs.readFileSync(path.join(sourcePath, fileList[selectedFile].join(".")), {encoding:"utf8"});
-    	let a = yaml.parse(fileContents);
+    	let parsedContents = yaml.parse(fileContents);
 		
-		
+		ruleContext.reset();
 
-		for (let entry of Object.entries(a)) {
+
+
+		for (let entry of Object.entries(parsedContents)) {
+			if (Object.hasOwn(readTriggers, entry[0])) {
+				readTriggers[entry[0]](ruleContext);
+			}
+
 			if (isSearchCheck(entry[0])) {
-				let d = deserialiseSearchCheck(entry[0]);
-				console.log(d);
+				ruleContext.searchCheck =  deserialiseSearchCheck(entry[0], entry[1]);
+			}
+			else {
+				if (Object.hasOwn(ruleMapping, entry[0])) {
+					ruleMapping[entry[0]](ruleContext, entry[1]);
+				}
+				else if (Object.hasOwn(ruleContext, entry[0])) {
+					ruleContext[entry[0]] = entry[1];
+				}
+				else {
+					console.error("Did not understand key-value pair", entry);
+				}
 			}
 		}
+
+		ruleContext.update();
 	}
 }
 
@@ -121,10 +141,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 			fileListElement.appendChild(item);
 		}
 		
-		fileListElement.lastChild.style.marginBottom = 0;
-
-		selectFile({target:{dataset:{index:0}}})
-		
+		fileListElement.lastChild.style.marginBottom = 0;		
 	}
 
 	// DEBUG
@@ -134,10 +151,22 @@ window.addEventListener("DOMContentLoaded", ()=>{
 	window.nativeapis.on("folderSelected", folderSelectedCallback)
 	*/
 
-
+	buildRadiolist(document.getElementById("itemtype"), itemTypes);
 	buildChecklist(document.getElementById("fields"), searchFields);
 	buildRadiolist(document.getElementById("matchtype"), searchMethods);
 	buildChecklist(document.getElementById("matchmodifier"), searchModifiers);
+	buildChecklist(document.getElementById("misc"), miscList);
+	buildChecklist(document.getElementById("miniactions"), miniActions);
 
+	ruleContext.on("update", updateItemType);
+	ruleContext.on("update", updateNME);
+	ruleContext.on("update", updateFields);
+	ruleContext.on("update", updateSearchMethod);
+	ruleContext.on("update", updateMatchText);
+	ruleContext.on("update", updateMiscChecks);
+	ruleContext.on("update", updateNumeralChecks);
+	ruleContext.on("update", updateActionForm);
+
+	selectFile({target:{dataset:{index:0}}})
 })
 

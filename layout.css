@@ -6,18 +6,26 @@
 
 #rulearea {
     display: grid;
-    grid-template-rows: min-content min-content min-content;
-
+    grid-template-rows: min-content min-content;
+    row-gap: 3em;
 }
+
 #conditionform {
-    margin-top: 3em;
+    margin-top: 2em;
     display:grid;
     grid-template-columns: auto auto auto;
-    row-gap: 3em;
+    column-gap: 3em;
 }
 
 #searchingchecks {
     display: grid;
     grid-template-columns: min-content min-content min-content;
     column-gap: 1em;
+}
+
+#actionform {
+    margin-top: 2em;
+    display: grid;
+    grid-template-columns: max-content min-content min-content min-content;
+    column-gap: 3em;
 }

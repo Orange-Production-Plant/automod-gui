@@ -6,8 +6,9 @@
 	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
 	<title>Automod Rules Editor</title>
 	<script src="structure.js" defer></script>
-	<script src="index.js" defer></script>
 	<script src="elements.js" defer></script>
+	<script src="listeners.js" defer></script>
+	<script src="index.js" defer></script>
 	<link rel="stylesheet" href="layout.css">
 	<link rel="stylesheet" href="elements.css">
 </head>
@@ -25,50 +26,113 @@
 			</div>
 		</section>
 		<section id="rulearea" class="container">
-			<h3>Conditions and actions</h3>
-			<div id="conditionform">
-				<div> <!-- First column -->
-					<h5 class="sectionlabel">Post type to match</h5>
-					<div class="listview">
-						<ul id="itemtype" class="checklist">
-							<li is="checklist-element" data-id="comment">Comment</li>
-							<li is="checklist-element" data-id="text">Text post</li>
-							<li is="checklist-element" data-id="link">Link post</li>
-							<li is="checklist-element" data-id="gallery">Gallery post</li>
-							<li is="checklist-element" data-id="poll">Poll post</li>
-							<li is="checklist-element" data-id="crosspost">Crosspost</li>
-						</ul>
-					</div>
-					<br> <br>
-					<input id="nme" name="nme" class="checklist-button" type="checkbox"><label for="nme" class="checklist-label">Apply to moderators</label>
-					
-				</div>
-				<div> <!-- Second column -->
-					
-					<div id="searchingchecks">
-						<div>
-							<h5 class="sectionlabel">Fields to match</h5>
-							<div class="listview">
-								<ul id="fields" class="checklist"></ul>
-							</div>
+			<div>
+				<h3>Conditions</h3>
+				<div id="conditionform">
+					<div> <!-- First column -->
+						<h5 class="sectionlabel">Post type to match</h5>
+						<div class="listview">
+							<ul id="itemtype" class="checklist"></ul>
 						</div>
+						<br> <br>
+						<input id="nme" name="nme" class="checklist-button" type="checkbox"><label for="nme" class="checklist-label">Apply to moderators</label>
 						
-						<div>
-							<h5 class="sectionlabel">Matching method</h5>
-							<div class="listview">
-								<ul id="matchtype"></ul>
-								<ul id="matchmodifier"></ul>
+					</div>
+					<div> <!-- Second column -->
+						
+						<div id="searchingchecks">
+							<div>
+								<h5 class="sectionlabel">Fields to match</h5>
+								<div class="listview">
+									<ul id="fields" class="checklist"></ul>
+								</div>
+							</div>
+							
+							<div>
+								<h5 class="sectionlabel">Matching method</h5>
+								<div class="listview">
+									<ul id="matchtype"></ul>
+									<ul id="matchmodifier"></ul>
+								</div>
+							</div>
+							<div>
+								<label class="sectionlabel" for="fieldmatch">Text to match</label>
+								<textarea id="fieldmatch" name="fieldmatch" cols="30" rows="4"></textarea>
 							</div>
 						</div>
-						<div>
-							<label class="sectionlabel" for="fieldmatch">Text to match</label>
-							<input id="fieldmatch" type="text">
+					</div>
+					<div> <!-- Third column -->
+						<h5 class="sectionlabel">Miscellaneous checks</h5>
+						<div class="listview">
+							<ul id="misc"></ul>
 						</div>
+						<br><br>
+						<label class="sectionlabel" for="reports">Minimum number of reports</label><br>
+						<input type="number" id="reports" name="reports"><br>
+						<br>
+						<label class="sectionlabel" for="body_longer_than">Body longer than</label><br>
+						<input type="number" id="body_longer_than" name="body_longer_than"><br>
+						<br>
+						<label class="sectionlabel" for="body_shorter_than">Body shorter than</label><br>
+						<input type="number" id="body_shorter_than" name="body_shorter_than"><br>
+						<br>
 					</div>
 				</div>
-				<div> <!-- Third column -->
-					<div class="listview">
-						<ul id="misc"></ul>
+			</div>
+			<div>
+				<h3>Actions</h3>
+				<div id="actionform">
+					<div> <!-- First column -->
+						
+						<label class="sectionlabel" for="action">Action to apply</label><br>
+						<select id="action">
+							<option id="action-none" value="none" selected>No action</option>
+							<option id="action-approve" value="approve">Approve</option>
+							<option id="action-remove" value="remove">Remove</option>
+							<option id="action-spam" value="spam">Spam</option>
+							<option id="action-filter" value="filter">Filter</option>
+							<option id="action-report" value="report">Report</option>
+						</select>
+						<br><br>
+						<label class="sectionlabel" for="action_reason">Reason for action</label><br>
+						<textarea id="action_reason" name="action_reason" cols="30" rows="4"></textarea>
+					</div>
+					<div> <!-- Second column-->
+						<input id="do_set_flair" name="do_set_flair" class="checklist-button" type="checkbox"><label for="do_set_flair" class="checklist-label">Set flair</label><br>
+						<br>
+						<label class="sectionlabel" for="set_flair">Flair text</label>
+						<textarea id="set_flair" name="set_flair" cols="30" rows="4"></textarea><br>
+						<br><br>
+						<div class="listview">
+							<ul id="miniactions"></ul>
+						</div>
+					</div>
+					<div> <!-- Third column-->
+						<input id="send_message" name="send_message" class="checklist-button" type="checkbox"><label for="send_message" class="checklist-label">Send message to user</label><br>
+						<br>
+						<label class="sectionlabel" for="message_subject">Subject</label>
+						<textarea id="message_subject" name="message_subject" cols="30" rows="4"></textarea><br>
+						<br><br>
+						<label class="sectionlabel" for="message">Body</label>
+						<textarea id="message" name="message" cols="30" rows="4"></textarea><br>
+						<br>
+						<br>
+						<br>
+						<input id="send_comment" name="send_comment" class="checklist-button" type="checkbox"><label for="send_comment" class="checklist-label">Leave comment in reply</label><br>
+						<br>
+						<label class="sectionlabel" for="comment">Comment body</label>
+						<textarea id="comment" name="comment" cols="30" rows="4"></textarea><br>
+						<input id="comment_locked" name="comment_locked" class="checklist-button" type="checkbox"><label for="comment_locked" class="checklist-label">Lock replies to automod comment</label><br>
+						<input id="comment_stickied" name="comment_stickied" class="checklist-button" type="checkbox"><label for="comment_stickied" class="checklist-label">Sticky automod comment</label><br>
+					</div>
+					<div> <!-- Fourth column -->
+						<input id="send_modmail" name="send_modmail" class="checklist-button" type="checkbox"><label for="send_modmail" class="checklist-label">Send modmail to moderators</label><br>
+						<br>
+						<label class="sectionlabel" for="modmail_subject">Subject</label>
+						<textarea id="modmail_subject" name="modmail_subject" cols="30" rows="4"></textarea><br>
+						<br><br>
+						<label class="sectionlabel" for="modmail">Body</label>
+						<textarea id="modmail" name="modmail" cols="30" rows="4"></textarea><br>
 					</div>
 				</div>
 			</div>
