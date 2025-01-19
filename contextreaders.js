@@ -112,7 +112,7 @@ function updateMatchText(ruleContext) {
  * 
  * @param {any[]} list 
  * @param {object} obj 
- * @returns 
+ * @returns {any[]}
  */
 function objHasTrueKeys(list, obj) {
 	let ret = [];
@@ -160,6 +160,8 @@ function updateActionForm(ruleContext) {
 		let element = document.getElementById(box);
 		element.value = ruleContext[box];
 	}
+
+	resetCheckListAndTickBox("miniactions",objHasTrueKeys(Object.keys(miniActions), ruleContext));
 
 }
 

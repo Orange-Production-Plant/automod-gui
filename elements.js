@@ -6,7 +6,7 @@ class ChecklistElement extends HTMLLIElement {
 	connectedCallback() {
 		this.classList.add("checklist-element");
 		
-		let id = this.parentElement.id + "-" +  this.dataset.id
+		let id = this.parentElement.id + "-" +  this.dataset.value
 		let checkbox = document.createElement("input");
 	
 		checkbox.type = "checkbox";

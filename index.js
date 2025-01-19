@@ -36,8 +36,6 @@ function selectFile(event) {
 		
 		ruleContext.reset();
 
-
-
 		for (let entry of Object.entries(parsedContents)) {
 			if (Object.hasOwn(readTriggers, entry[0])) {
 				readTriggers[entry[0]](ruleContext);
@@ -58,49 +56,32 @@ function selectFile(event) {
 				}
 			}
 		}
-
 		ruleContext.update();
 	}
 }
 
-/**
- * 
- * @param {HTMLUListElement} rootElement 
- * @param {object} idObject 
- */
-function buildChecklist(rootElement, idObject) {
-	let lastLi;
-	for (let entry of Object.entries(idObject)) {
-		const id = entry[0];
-		const labelText = entry[1];
 
-		let li = new ChecklistElement();
-
-		li.dataset.id = id;
-		li.innerText = labelText;
-
-		rootElement.appendChild(li);
-		lastLi = li;
-	}
-
-	lastLi.style.marginBottom = 0;
-}
 /**
  * 
  * @param {HTMLUListElement} rootElement 
  * @param {object} valueObject 
  */
-function buildRadiolist(rootElement, valueObject) {
+function buildChecklist(rootElement, valueObject, isCheck = true) {
 	let lastLi;
 	for (let entry of Object.entries(valueObject)) {
 		const value = entry[0];
 		const labelText = entry[1];
-
-		let li = new RadiolistElement();
-
+		
+		let li;
+		if (isCheck) {
+			li = new ChecklistElement();
+		}
+		else {
+			li = new RadiolistElement();
+		}
+		
 		li.dataset.value = value;
 		li.innerText = labelText;
-
 
 		rootElement.appendChild(li);
 		lastLi = li;
@@ -151,12 +132,24 @@ window.addEventListener("DOMContentLoaded", ()=>{
 	window.nativeapis.on("folderSelected", folderSelectedCallback)
 	*/
 
-	buildRadiolist(document.getElementById("itemtype"), itemTypes);
-	buildChecklist(document.getElementById("fields"), searchFields);
-	buildRadiolist(document.getElementById("matchtype"), searchMethods);
-	buildChecklist(document.getElementById("matchmodifier"), searchModifiers);
-	buildChecklist(document.getElementById("misc"), miscList);
-	buildChecklist(document.getElementById("miniactions"), miniActions);
+	let formListener = new FormListener(ruleContext);
+
+	const no = ()=>{};
+
+	const checklists = {
+		"itemtype": [itemTypes, false, (event)=>{formListener.readItemtype(event)}],
+		"fields": [searchFields, true, (event)=>{formListener.readFields(event)}],
+		"matchtype": [searchMethods, false, (event)=>{formListener.readSearchMethod(event)}],
+		"matchmodifier": [searchModifiers, true, (event)=>{formListener.readSearchMethod(event)}],
+		"misc": [miscList, true, (event)=>{formListener.readMiscChecks(event)}],
+		"miniactions": [miniActions, true, no]
+	}
+
+	for (let entry of Object.entries(checklists)) {
+		buildChecklist(document.getElementById(entry[0]), entry[1][0], entry[1][1]);
+		attachChecklistListeners(entry[0], Object.keys(entry[1][0]), entry[1][2]);
+	}
+
 
 	ruleContext.on("update", updateItemType);
 	ruleContext.on("update", updateNME);
@@ -166,6 +159,12 @@ window.addEventListener("DOMContentLoaded", ()=>{
 	ruleContext.on("update", updateMiscChecks);
 	ruleContext.on("update", updateNumeralChecks);
 	ruleContext.on("update", updateActionForm);
+
+	const addChangeListener = (id)=> {
+		document.getElementById(id).addEventListener("change", (event) => {formListener["read" + id]()});
+	}
+	addChangeListener("nme");
+	addChangeListener("fieldmatch")
 
 	selectFile({target:{dataset:{index:0}}})
 })
