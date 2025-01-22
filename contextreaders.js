@@ -89,7 +89,7 @@ function updateSearchMethod(ruleContext) {
 
 	resetCheckListAndTickBox("matchmodifier", combinableModifiers);
 
-	const invertCheckbox = document.getElementById("matchmodifier-invert");
+	const invertCheckbox = document.getElementById("invert-invert");
 	invertCheckbox.checked = ruleContext.searchCheck.isInverted;
 }
 
@@ -136,7 +136,7 @@ function updateMiscChecks(ruleContext) {
  * @param {RuleContext} ruleContext 
  */
 function updateNumeralChecks(ruleContext) {
-	let numeralChecks = ["reports", "body_longer_than", "body_shorter_than"];
+	
 
 	for (let check of numeralChecks) {
 		document.getElementById(check).value = ruleContext[check];
@@ -148,9 +148,6 @@ function updateNumeralChecks(ruleContext) {
  * @param {RuleContext} ruleContext 
  */
 function updateActionForm(ruleContext) {
-
-	let checkboxes = ["do_set_flair", "send_message", "send_comment", "send_modmail", "comment_locked", "comment_stickied"];
-	let textboxes = ["action", "action_reason", "set_flair", "message_subject", "message", "comment", "modmail_subject", "modmail"];
 
 	for (let box of checkboxes) {
 		let element = document.getElementById(box);

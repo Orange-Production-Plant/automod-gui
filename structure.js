@@ -35,8 +35,7 @@ const searchMethods = {
 }
 const searchModifiers = {
 	"case-sensitive": "Case sensitive",
-	"regex": "Regular expression",
-	"invert": "Invert match"
+	"regex": "Regular expression"
 }
 
 const miscList = {
@@ -53,6 +52,9 @@ const miniActions = {
 	"set_contest_mode": "Enable contest mode for comment section",
 	"set_locked": "Lock matched entity"
 }
+const numeralChecks = ["reports", "body_longer_than", "body_shorter_than"];
+const checkboxes = ["do_set_flair", "send_message", "send_comment", "send_modmail", "comment_locked", "comment_stickied"];
+const textboxes = ["action", "action_reason", "set_flair", "message_subject", "message", "comment", "modmail_subject", "modmail"];
 
 
 /**
@@ -134,6 +136,16 @@ function deserialiseSearchCheck(keyString, values) {
 	return new SearchCheck(fields, modifiers, isInverted, valuesArr);
 }
 
+const typeNameMapping = {
+	"any": "any",
+	"comment":"comment",
+	"submission": "submission",
+	"text submission": "text",
+	"link submission": "link",
+	"poll submission": "poll",
+	"gallery submission": "gallery",
+	"crosspost submission": "crosspost"
+}
 
 
 
@@ -219,6 +231,91 @@ class RuleContext {
 		}
 	}
 
+	redditise() {
+		let outObj = {};
+
+		const defaultContext = new RuleContext();
+		const noop = ()=>{/*no-op*/};
+		let specialHandlers = 
+		{"type": (ruleContext, out) =>{
+			let revTypeNameMapping = {}
+			for (let entry of Object.entries(typeNameMapping)) {
+				revTypeNameMapping[entry[1]] = entry[0];
+			}
+	
+			outObj.type = revTypeNameMapping[this.type];
+		},
+		"searchCheck":(ruleContext, out) =>{
+			if (ruleContext.searchCheck.fields.length > 0) {
+				let fieldString = ruleContext.searchCheck.fields.join("+");
+				let ret = (ruleContext.searchCheck.isInverted) ? "~" : "";
+
+				ret += fieldString;
+				
+				if (ruleContext.searchCheck.modifiers.length > 1) {
+					let necessaryModifiers = [];
+					for (let modifier of ruleContext.searchCheck.modifiers) {
+						if (!((modifier == "includes" && ruleContext.searchCheck.fields.length == 1) || (modifier == "includes-word" && ruleContext.searchCheck.fields > 1))) {
+							necessaryModifiers.push(modifier);
+						}
+					}
+
+					ret += " (" + necessaryModifiers.join(", ") + ")";
+				}
+
+				out[ret] = ruleContext.searchCheck.values;
+			}
+			
+		},
+		"do_set_flair":(ruleContext, out) =>{
+			if (ruleContext.do_set_flair) {
+				out.set_flair = ruleContext.set_flair
+			}
+		}, 
+		"send_comment": (ruleContext, out) =>{
+			if (ruleContext.send_comment) {
+				out.comment = ruleContext.comment;
+				out.comment_locked = ruleContext.comment_locked;
+				out.comment_stickied = ruleContext.comment_stickied;
+			}
+		}, 
+		"send_message":(ruleContext, out) =>{
+			if (ruleContext.send_message) {
+				out.message = ruleContext.message;
+				out.message_subject = ruleContext.message_subject;
+			}
+
+		}, 
+		"send_modmail": (ruleContext, out) =>{
+			if (ruleContext.send_modmail) {
+				out.modmail = ruleContext.modmail;
+				out.modmail_subject = ruleContext.modmail_subject;
+			}
+		},
+		"updateHandlers": noop,
+		"message": noop,
+		"message_subject": noop,
+		"modmail": noop,
+		"modmail_subject": noop,
+		"comment": noop,
+		"comment_stickied": noop,
+		"comment_locked": noop,
+		"set_flair": noop
+		};
+
+		for (let id in this) {
+			if (!(this[id] == defaultContext[id])) {
+				if (Object.hasOwn(specialHandlers, id)) {
+					specialHandlers[id](this,outObj);
+				}
+				else {
+					outObj[id] = this[id];
+				}
+			}
+		}
+
+		return outObj;
+	}
 
 }
 
@@ -235,53 +332,22 @@ const ruleMapping = {
 	 * @param {string} value 
 	 */
 	"type": (ruleContext, value) => {
-		switch(value) {
-			case "any": {
-				ruleContext.type = "any";
-				break;
-			}
-			case "comment": {
-				ruleContext.type = "comment";
-				break;
-			}
-			case "submission": {
-				ruleContext.type = "submission";
-				break;
-			}
-			case "text submission": {
-				ruleContext.type = "text";
-				break;
-			}
-			case "link submission": {
-				ruleContext.type = "link";
-				break;
-			}
-			case "poll submission": {
-				ruleContext.type = "poll";
-				break;
-			}
-			case "gallery submission": {
-				ruleContext.type = "gallery";
-				break;
-			}
-			case "crosspost submission": {
-				ruleContext.type = "crosspost";
-				break;
-			}
-		}
+		if (!typeNameMapping[value]) throw "Error in type value read: " + value;
+		ruleContext.type = typeNameMapping[value];
 	}
+
 }
 
 const readTriggers = {
 	"modmail": (ruleContext) => {
 		ruleContext.send_modmail = true;
 	},
-	"modmail_subject": this.modmail,
+	//"modmail_subject": this.modmail,
 	
 	"message": (ruleContext) => {
 		ruleContext.send_message = true;
 	},
-	"message_subject": this.message,
+	//"message_subject": this.message,
 
 	"comment": (ruleContext) => {
 		ruleContext.send_comment = true;

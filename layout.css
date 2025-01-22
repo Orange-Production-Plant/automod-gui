@@ -1,6 +1,6 @@
 #main {
     display:grid;
-    grid-template-columns: min-content auto;
+    grid-template-columns: max-content max-content max-content;
     column-gap: 3em;
 }
 
@@ -13,7 +13,7 @@
 #conditionform {
     margin-top: 2em;
     display:grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: max-content max-content max-content;
     column-gap: 3em;
 }
 
@@ -21,11 +21,17 @@
     display: grid;
     grid-template-columns: min-content min-content min-content;
     column-gap: 1em;
+
 }
 
 #actionform {
     margin-top: 2em;
     display: grid;
-    grid-template-columns: max-content min-content min-content min-content;
+    grid-template-columns: max-content min-content min-content;
     column-gap: 3em;
 }
+
+#demoroot {
+    margin-top: 2em;
+}
+

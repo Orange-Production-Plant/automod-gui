@@ -60,6 +60,10 @@ function selectFile(event) {
 	}
 }
 
+function saveToFile(event) {
+	fs.writeFileSync((path.join(sourcePath, fileList[selectedFile].join("."))), yaml.stringify(ruleContext.redditise()));
+}
+
 
 /**
  * 
@@ -126,7 +130,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 	}
 
 	// DEBUG
-	folderSelectedCallback("../source/")
+	folderSelectedCallback("./source/")
 	/*
 	window.nativeapis.openDirectoryDialog("Please select automod source files directory")
 	window.nativeapis.on("folderSelected", folderSelectedCallback)
@@ -134,15 +138,13 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
 	let formListener = new FormListener(ruleContext);
 
-	const no = ()=>{};
-
 	const checklists = {
 		"itemtype": [itemTypes, false, (event)=>{formListener.readItemtype(event)}],
 		"fields": [searchFields, true, (event)=>{formListener.readFields(event)}],
 		"matchtype": [searchMethods, false, (event)=>{formListener.readSearchMethod(event)}],
 		"matchmodifier": [searchModifiers, true, (event)=>{formListener.readSearchMethod(event)}],
 		"misc": [miscList, true, (event)=>{formListener.readMiscChecks(event)}],
-		"miniactions": [miniActions, true, no]
+		"miniactions": [miniActions, true, (event)=>{formListener.readMiniactions(event)}]
 	}
 
 	for (let entry of Object.entries(checklists)) {
@@ -159,13 +161,38 @@ window.addEventListener("DOMContentLoaded", ()=>{
 	ruleContext.on("update", updateMiscChecks);
 	ruleContext.on("update", updateNumeralChecks);
 	ruleContext.on("update", updateActionForm);
+	
+	ruleContext.on("update", constructDemoArea);
+	ruleContext.on("update", testRule);
 
 	const addChangeListener = (id)=> {
 		document.getElementById(id).addEventListener("change", (event) => {formListener["read" + id]()});
 	}
-	addChangeListener("nme");
-	addChangeListener("fieldmatch")
+	const addInputListener = (id)=> {
+		document.getElementById(id).addEventListener("input", (event) => {formListener["read" + id]()});
+	}
 
+	addChangeListener("nme");
+	addInputListener("fieldmatch");
+	
+	document.getElementById("invert-invert").addEventListener("change", (event) => {
+		formListener.readinvert(event);
+	})
+
+	for (let check of numeralChecks) {
+		document.getElementById(check).addEventListener("input", (event)=>{formListener.readTextInput(event);});
+	}
+	for (let box of checkboxes) {
+		document.getElementById(box).addEventListener("change", (event)=>{formListener.readCheckboxInput(event)});
+	}
+	for (let box of textboxes) {
+		document.getElementById(box).addEventListener("input", (event)=>{formListener.readTextInput(event)});
+	}
+	
 	selectFile({target:{dataset:{index:0}}})
+	
+	document.getElementById("save").addEventListener("click", saveToFile);
+	
+	rcStore = ruleContext;
 })
 
