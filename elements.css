@@ -23,11 +23,22 @@ p {
 }
 .shovetop {
     display: block;
-    margin-top: 2em;
+    margin-top: 4em;
+}
+.pushtop {
+    display: block;
+    margin-top: 1.5em;
+}
+.indent {
+    margin-left: 2em;
 }
 
 .container {
     padding: 1vw 1vw 1vw 1vw
+}
+
+.smallcontainer {
+    padding: 0.5vw
 }
 
 .groupbox {

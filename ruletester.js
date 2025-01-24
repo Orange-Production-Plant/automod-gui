@@ -1,3 +1,12 @@
+
+/**
+ * 
+ * @param {string} inputType 
+ * @param {string} inputValue 
+ * @param {string[]} inputClassList 
+ * @param {string} inputID 
+ * @returns {any}
+ */
 function defaultTypeMapper(inputType, inputValue, inputClassList = "", inputID = "") {
 	switch (inputType) {
 		case "text": {
@@ -9,6 +18,9 @@ function defaultTypeMapper(inputType, inputValue, inputClassList = "", inputID =
 		case "tel": {
 			return parseInt(inputValue);
 		}
+		case "checkbox": {
+			return (inputValue == "on");
+		}
 		default: {
 			return inputValue;
 		}
@@ -18,7 +30,7 @@ function defaultTypeMapper(inputType, inputValue, inputClassList = "", inputID =
 /**
  * Gets the values of the form elements marked with the provided class name
  * @param {string} className 
- * @param {function} typeMapper 
+ * @param {defaultTypeMapper} typeMapper 
  * @returns {object} {element id: value}
  */
 function collectForm(className, typeMapper = defaultTypeMapper) {
@@ -50,13 +62,14 @@ function onDemoUpdate() {
  * 
  * @param {HTMLElement} rootElement 
  */
-function constructSubmissionCommon(rootElement) {
+function constructTitle(rootElement) {
 	
 	let titleLabel = document.createElement("label");
 	let titleInput = document.createElement("input");
 	
 	titleInput.id = "title";
 	titleInput.name = titleInput.id;
+	titleInput.classList.add("demoform");
 	titleInput.type = "text";
 	titleInput.oninput = onDemoUpdate;
 
@@ -70,31 +83,103 @@ function constructSubmissionCommon(rootElement) {
 }
 
 
+
 /**
  * 
  * @param {HTMLElement} rootElement 
  */
-function constructTextPost(rootElement) {
-	constructSubmissionCommon(rootElement);
+function constructComment(rootElement) {
+	
+	let commentLabel = document.createElement("label");
+	let commentInput = document.createElement("textarea");
+	
 
+	commentInput.id = "comment-" + rootElement.dataset.id;
+	commentInput.name = commentInput.id;
+	commentInput.classList.add("comment");
+	commentInput.classList.add("demoform");
+	commentInput.oninput = onDemoUpdate;
+	commentInput.cols = 30;
+	commentInput.rows = 4;
+
+
+	commentLabel.innerText = (rootElement.dataset.id == 0) ? "Top-level comment" : "Reply comment";
+	commentLabel.htmlFor = commentInput.id;
+	commentLabel.classList.add("sectionlabel");
+
+	rootElement.appendChild(commentLabel);
+	rootElement.appendChild(document.createElement("br"));
+	rootElement.appendChild(commentInput);
+	maxComment++;
+}
+
+
+/**
+ * 
+ * @param {HTMLElement} rootElement 
+ */
+function constructPostBody(rootElement) {
 	let bodyLabel = document.createElement("label");
 	let bodyInput = document.createElement("textarea");
 
 	bodyInput.id = "body";
 	bodyInput.name = bodyInput.id;
+	bodyInput.classList.add("demoform");
 	bodyInput.oninput = onDemoUpdate;
+	bodyInput.cols = 30;
+	bodyInput.rows = 4;
 
 	bodyLabel.innerText = "Body:";
 	bodyLabel.htmlFor = bodyInput.id;
 	bodyLabel.classList.add("sectionlabel");
-	bodyLabel.classList.add("shovetop");
 
-	rootElement.appendChild(document.createElement("br"));
 	rootElement.appendChild(bodyLabel);
+	rootElement.appendChild(document.createElement("br"));
 	rootElement.appendChild(bodyInput);
 }
 
 
+function constructTitleArea(postContainer) {
+	let titleContainer = document.createElement("div");
+	titleContainer.classList.add("smallcontainer");
+	titleContainer.id = "title-container";
+	postContainer.appendChild(titleContainer);
+	constructTitle(titleContainer);
+}
+
+function constructBodyArea(postContainer) {
+	let bodyContainer = document.createElement("div");
+	bodyContainer.classList.add("smallcontainer");
+	bodyContainer.id = "body-container";
+	postContainer.appendChild(bodyContainer);
+	constructPostBody(bodyContainer);
+}
+
+function constructCommentArea(demoroot) {
+	let commentContainer = document.createElement("div");
+	commentContainer.classList.add("groupbox");
+	commentContainer.classList.add("shovetop");
+	commentContainer.id = "comment-container";
+	demoroot.appendChild(commentContainer);
+
+	let topLevelCommentContainer = document.createElement("div");
+	topLevelCommentContainer.classList.add("smallcontainer");
+	topLevelCommentContainer.dataset.id = 0;
+	topLevelCommentContainer.id = "comment-0-container";
+
+	let replyCommentContainer = document.createElement("div");
+	replyCommentContainer.classList.add("pushtop");
+	replyCommentContainer.classList.add("smallcontainer");
+	replyCommentContainer.dataset.id = 1;
+	replyCommentContainer.id = "comment-1-container";
+
+	demoroot.appendChild(commentContainer);
+	commentContainer.appendChild(topLevelCommentContainer);
+	constructComment(topLevelCommentContainer);
+	
+	commentContainer.appendChild(replyCommentContainer);
+	constructComment(replyCommentContainer);
+}
 
 let currentType = "";
 
@@ -105,11 +190,39 @@ let currentType = "";
 function constructDemoArea(ruleContext) {
 	if (ruleContext.type != currentType) {
 		let demoroot = document.getElementById("demoroot");
-
+		
 		demoroot.replaceChildren();
+		maxComment = 0;
+
+		switch (ruleContext.type) {
+			case "any":
+			case "submission":
+			case "gallery":
+			case "link":
+			case "poll":
+			case "crosspost":
+			case "text": {
+				let postContainer = document.createElement("div");
+				postContainer.classList.add("groupbox");
+				postContainer.id = "post-container";
+				demoroot.appendChild(postContainer);
+
+				constructTitleArea(postContainer);
+				constructBodyArea(postContainer);
+				constructCommentArea(demoroot);
+				
+			}
+			break;
+			case "comment":
+			{
+				constructComment(demoroot);
+			}
+			break;
+			
+			
+		}
 		
 		
-		constructTextPost(demoroot);
 		
 		demoroot.appendChild(document.createElement("br"));
 		demoroot.appendChild(document.createElement("br"));
@@ -189,39 +302,73 @@ function buildMatchRegex(value, modifiers) {
 
 /**
  * 
+ * @param {string} field 
+ * @param {string} type
+ * @returns {string[]}
+ */
+function mapFieldToForm(field, type) {
+	switch(field) {
+		case "body":
+			let arr = new Array(maxComment).fill(0).map((val, idx) => ("comment-"+idx));
+			if (!(type == "comment")) {
+				arr.push("body");
+			}
+			return arr;
+
+		default:
+			return [field];
+	}
+}
+
+/**
+ * 
  * @param {RuleContext} ruleContext 
  */
 function testRule(ruleContext) {
+	let form = collectForm("demoform");
+
+	for (let id of Object.keys(form)) {
+		let e = document.getElementById(id + "-container");
+		e.style.backgroundColor = "transparent";
+	}
+
+	let matchedElements = testSearchCheck(ruleContext, form);
+
+	for (let id of matchedElements) {
+		let e = document.getElementById(id + "-container");
+		e.style.backgroundColor = "rgba(200 0 0 / 80%)";
+	}
+}
+
+/**
+ * 
+ * @param {RuleContext} ruleContext 
+ * @param {object} form 
+ * @returns 
+ */
+function testSearchCheck(ruleContext, form) {
+	let matchedElements = [];
 
 	for (let field of ruleContext.searchCheck.fields) {
-		let el;
-		if (el = document.getElementById(field)) {
-			for (let value of ruleContext.searchCheck.values) {
-				let regex = buildMatchRegex(value, ruleContext.searchCheck.modifiers);
-				
-				let output = document.getElementById("output");
-				let result = regex.exec(el.value);
-				if (!ruleContext.searchCheck.isInverted){
-					if (result) {
-						output.innerText = "Test " + result[0] +  " matched on field " + field + "!"
-						return;
+		let formElements = mapFieldToForm(field, currentType);
+		for (let formElement of formElements) {
+			if (Object.hasOwn(form, formElement)) {
+				for (let value of ruleContext.searchCheck.values) {
+					let regex = buildMatchRegex(value, ruleContext.searchCheck.modifiers);
+					let result = regex.exec(form[formElement]);
+					if (!ruleContext.searchCheck.isInverted){
+						if (result) {
+							matchedElements.push(formElement);
+						}
 					}
 					else {
-						output.innerText = "No match!";
+						if (!result) {
+							matchedElements.push(formElement);
+						}
 					}
 				}
-				else {
-					if (result) {
-						output.innerText = "No match!";
-					}
-					else {
-						output.innerText = "Test failed to match on field " + field + "!"
-						return;
-					}
-				}
-				
 			}
-			
 		}
 	}
+	return matchedElements;
 }
