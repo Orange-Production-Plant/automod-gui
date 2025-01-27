@@ -59,6 +59,16 @@ p {
     overflow-y: auto;
 }
 
+.dropdown {
+    height: 2em; 
+    overflow-y: hidden;
+}
+
+.dropdown:hover {
+    height: auto;
+    overflow-y: auto;
+}
+
 .buttonlist {
     width: fit-content;
     height: fit-content;

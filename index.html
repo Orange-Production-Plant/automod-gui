@@ -34,7 +34,7 @@
 					<div> <!-- First column -->
 						<div class="groupbox">
 							<h5 class="sectionlabel">Post type to match</h5>
-							<div class="listview">
+							<div class="listview dropdown">
 								<ul id="itemtype" class="checklist"></ul>
 							</div>
 						</div>
@@ -42,27 +42,29 @@
 						<input id="nme" name="nme" class="checklist-button" type="checkbox"><label for="nme" class="checklist-label">Apply to moderators</label>
 					</div>
 					<div class="groupbox"> <!-- Second column -->
-						<div id="searchingchecks" >
-							<div>
-								<h5 class="sectionlabel">Fields to match</h5>
-								<div class="listview">
-									<ul id="fields" class="checklist"></ul>
+						<div id="searchchecks">
+							<div class="searchcheck" >
+								<div>
+									<h5 class="sectionlabel">Fields to match</h5>
+									<div class="listview dropdown">
+										<ul id="fields" class="checklist"></ul>
+									</div>
 								</div>
-							</div>
-							
-							<div>
-								<h5 class="sectionlabel">Matching method</h5>
-								<div class="listview">
-									<ul id="matchtype"></ul>
-									<ul id="matchmodifier"></ul>
-									<ul id="invert">
-										<li is="checklist-element" data-value="invert">Invert match</li>
-									</ul>
+								
+								<div>
+									<h5 class="sectionlabel">Matching method</h5>
+									<div class="listview dropdown">
+										<ul id="matchtype"></ul>
+										<ul id="matchmodifier"></ul>
+										<ul id="invert">
+											<li is="checklist-element" data-value="invert">Invert match</li>
+										</ul>
+									</div>
 								</div>
-							</div>
-							<div>
-								<label class="sectionlabel" for="fieldmatch">Text to match</label>
-								<textarea id="fieldmatch" name="fieldmatch" cols="30" rows="4"></textarea>
+								<div>
+									<label class="sectionlabel" for="fieldmatch">Text to match</label>
+									<textarea id="fieldmatch" name="fieldmatch" cols="30" rows="4"></textarea>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -159,7 +161,7 @@
 			</div>
 		</section>
 		<section id="demoarea" class="container">
-			<h3>Demo rule</h3>
+			<h3>Sample post</h3>
 			<div id="demoroot"></div>
 		</section>
 	</main>

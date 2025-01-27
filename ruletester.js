@@ -21,6 +21,9 @@ function defaultTypeMapper(inputType, inputValue, inputClassList = "", inputID =
 		case "checkbox": {
 			return (inputValue == "on");
 		}
+		case "radio": {
+
+		}
 		default: {
 			return inputValue;
 		}
@@ -38,7 +41,12 @@ function collectForm(className, typeMapper = defaultTypeMapper) {
 
 	let formObject = {};
 	for (let input of inputs) {
-		formObject[input.id] = typeMapper(input.type, input.value, input.classList, input.id);
+		if (input.classList.contains("radiogroup")) {
+
+		}
+		else {
+			formObject[input.id] = typeMapper(input.type, input.value, input.classList, input.id);
+		}
 	}
 
 	return formObject;
