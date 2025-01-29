@@ -1,4 +1,67 @@
 
+
+
+/**
+ * 
+ * @param {string} inputType 
+ * @param {string} inputValue 
+ * @param {string[]} inputClassList 
+ * @param {string} inputID 
+ * @returns {any}
+ */
+function defaultTypeMapper(inputType, inputValue, inputClassList = "", inputID = "") {
+	switch (inputType) {
+		case "text": {
+			return inputValue;
+		}
+		case "number": {
+			return parseFloat(inputValue);
+		}
+		case "tel": {
+			return parseInt(inputValue);
+		}
+		case "checkbox": {
+			return (inputValue == "on");
+		}
+		default: {
+			return inputValue;
+		}
+	}
+}
+
+/**
+ * Gets the values of the form elements marked with the provided class name
+ * @param {string} className 
+ * @param {defaultTypeMapper} typeMapper 
+ * @returns {object} {element id: value}
+ */
+function collectForm(className, typeMapper = defaultTypeMapper) {
+	let inputs = document.getElementsByClassName(className);
+
+	let formObject = {};
+	for (let input of inputs) {
+		if (input.classList.contains("radiogroup")) {
+
+		}
+		else {
+			formObject[input.id] = typeMapper(input.type, input.value, input.classList, input.id);
+		}
+	}
+
+	return formObject;
+}
+
+function clearForm(className) {
+	let inputs = document.getElementsByClassName(className);
+	for (let input of inputs) {
+		input.value = "";
+	}
+}
+
+
+
+
+
 /**
  * 
  * @param {string} parentId 

@@ -8,13 +8,17 @@
 	<script src="structure.js" defer></script>
 	<script src="elements.js" defer></script>
 	<script src="contextreaders.js" defer></script>
-	<script src="ruletester.js" defer></script>
 	<script src="domreaders.js" defer></script>
+	<script src="ruletester.js" defer></script>
+	<script src="setup.js" defer></script>
 	<script src="index.js" defer></script>
 	<link rel="stylesheet" href="layout.css">
 	<link rel="stylesheet" href="elements.css">
 </head>
 <body>
+	<form id="rule"></form>
+	<form id="search"></form>
+	<form id="demo"></form>
 	<header class="container">
 		<h1>Automod rules editor</h1>
 	</header>
@@ -34,12 +38,10 @@
 					<div> <!-- First column -->
 						<div class="groupbox">
 							<h5 class="sectionlabel">Post type to match</h5>
-							<div class="listview dropdown">
-								<ul id="itemtype" class="checklist"></ul>
-							</div>
+							<select form="rule" class="itemtype"></select>
 						</div>
 						<br>
-						<input id="nme" name="nme" class="checklist-button" type="checkbox"><label for="nme" class="checklist-label">Apply to moderators</label>
+						<input form="rule" id="nme" name="nme" class="checklist-button" type="checkbox"><label for="nme" class="checklist-label">Apply to moderators</label>
 					</div>
 					<div class="groupbox"> <!-- Second column -->
 						<div id="searchchecks">
@@ -53,8 +55,8 @@
 								
 								<div>
 									<h5 class="sectionlabel">Matching method</h5>
-									<div class="listview dropdown">
-										<ul id="matchtype"></ul>
+									<select class="matchtype"></select>
+									<div class="listview dropdown pushtop">
 										<ul id="matchmodifier"></ul>
 										<ul id="invert">
 											<li is="checklist-element" data-value="invert">Invert match</li>

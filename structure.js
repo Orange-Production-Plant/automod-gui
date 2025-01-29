@@ -219,6 +219,32 @@ class RuleContext {
 		this.comment_stickied = false;
 	}
 
+	unredditise(parsedContents) {
+		this.reset();
+
+		for (let entry of Object.entries(parsedContents)) {
+			if (Object.hasOwn(readTriggers, entry[0])) {
+				readTriggers[entry[0]](this);
+			}
+
+			if (isSearchCheck(entry[0])) {
+				this.searchCheck =  deserialiseSearchCheck(entry[0], entry[1]);
+			}
+			else {
+				if (Object.hasOwn(ruleMapping, entry[0])) {
+					ruleMapping[entry[0]](this, entry[1]);
+				}
+				else if (Object.hasOwn(this, entry[0])) {
+					this[entry[0]] = entry[1];
+				}
+				else {
+					console.error("Did not understand key-value pair", entry);
+				}
+			}
+		}
+		this.update();
+	}
+
 	on(event, handler) {
 		if (event == "update") {
 			this.updateHandlers.push(handler);

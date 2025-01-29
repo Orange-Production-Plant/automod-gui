@@ -10,7 +10,7 @@ function resetRadioListAndTickBox(parentId, checkedValue) {
 	for (let element of rootElement.childNodes) {
 		element.childNodes[0].checked = false;
 	}
-	
+
 	/**
 	 * @type {HTMLInputElement}
 	 */
@@ -37,11 +37,11 @@ function resetCheckListAndTickBox(parentId, checkedValues) {
 	for (let checkedValue of checkedValues) {
 		const checkboxElement = document.getElementById(parentId + "-" + checkedValue);
 		if (!checkboxElement) throw parentId + "-" + checkedValue + "is not a valid type id!!!"
-	
+
 		checkboxElement.checked = true;
 	}
 }
-	
+
 
 
 /**
@@ -49,7 +49,7 @@ function resetCheckListAndTickBox(parentId, checkedValues) {
  * @param {RuleContext} ruleContext 
  */
 function updateItemType(ruleContext) {
-   resetRadioListAndTickBox("itemtype", ruleContext.type)
+	//resetRadioListAndTickBox("itemtype", ruleContext.type)
 }
 
 /**
@@ -74,16 +74,16 @@ function updateFields(ruleContext) {
  */
 function updateSearchMethod(ruleContext) {
 	let combinableModifiers = [];
-	
+
 	for (let modifier of ruleContext.searchCheck.modifiers) {
 		if (Object.hasOwn(searchModifiers, modifier)) {
 			combinableModifiers.push(modifier);
 		}
 		else if (Object.hasOwn(searchMethods, modifier)) {
-			resetRadioListAndTickBox("matchtype", modifier);
+			//resetRadioListAndTickBox("matchtype", modifier);
 		}
 		else {
-			throw "Fundamental error! " + modifier; 
+			throw "Fundamental error! " + modifier;
 		}
 	}
 
@@ -105,7 +105,7 @@ function updateMatchText(ruleContext) {
 	}
 	else {
 		textArea.innerText = "";
-	}	
+	}
 }
 
 /**
@@ -117,7 +117,7 @@ function updateMatchText(ruleContext) {
 function objHasTrueKeys(list, obj) {
 	let ret = [];
 	for (let val of list) {
-		if (obj[val]){
+		if (obj[val]) {
 			ret.push(val);
 		}
 	}
@@ -128,7 +128,7 @@ function objHasTrueKeys(list, obj) {
  * @param {RuleContext} ruleContext 
  */
 function updateMiscChecks(ruleContext) {
-	resetCheckListAndTickBox("misc",objHasTrueKeys(Object.keys(miscList), ruleContext));
+	resetCheckListAndTickBox("misc", objHasTrueKeys(Object.keys(miscList), ruleContext));
 }
 
 /**
@@ -136,7 +136,7 @@ function updateMiscChecks(ruleContext) {
  * @param {RuleContext} ruleContext 
  */
 function updateNumeralChecks(ruleContext) {
-	
+
 
 	for (let check of numeralChecks) {
 		document.getElementById(check).value = ruleContext[check];
@@ -158,7 +158,7 @@ function updateActionForm(ruleContext) {
 		element.value = ruleContext[box];
 	}
 
-	resetCheckListAndTickBox("miniactions",objHasTrueKeys(Object.keys(miniActions), ruleContext));
+	resetCheckListAndTickBox("miniactions", objHasTrueKeys(Object.keys(miniActions), ruleContext));
 
 }
 
