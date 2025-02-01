@@ -56,6 +56,15 @@ const numeralChecks = ["reports", "body_longer_than", "body_shorter_than"];
 const checkboxes = ["do_set_flair", "send_message", "send_comment", "send_modmail", "comment_locked", "comment_stickied"];
 const textboxes = ["action", "action_reason", "set_flair", "message_subject", "message", "comment", "modmail_subject", "modmail"];
 
+const valueObjects = {
+	"itemtype": itemTypes,
+	"searchfields": searchFields,
+	"searchmethods": searchMethods,
+	"searchmodifiers": searchModifiers,
+	"miscprops": miscList,
+	"miniactions": miniActions
+}
+
 
 /**
  * @param {string} keyString 
@@ -90,8 +99,7 @@ class SearchCheck {
  */
 function deserialiseSearchCheck(keyString, values) {
 	if (!isSearchCheck(keyString)) throw "Not a search check!";
-
-
+	
 	let str = keyString.trim()
 	let parts = str.split(/ +/);
 
@@ -121,7 +129,35 @@ function deserialiseSearchCheck(keyString, values) {
 			modifiers.push("includes-word");
 		}
 		else {
-			modifiers.push("includes");
+			switch(fields[0]) {
+				case "domain":
+					modifiers.push("full-exact");
+				break;
+				case "id":
+					modifiers.push("full-exact");
+				break;
+				case "url":
+					modifiers.push("includes");
+				break;
+				case "flair_text":
+					modifiers.push("full-exact");
+				break;
+				case "flair_css_class":
+					modifiers.push("full-exact");
+				break;
+				case "flair_template_id":
+					modifiers.push("full-exact");
+				break;
+				case "media_author":
+					modifiers.push("full-exact");
+				break;
+				case "media_author_url":
+					modifiers.push("full-exact");
+				break;
+				default:
+					modifiers.push("includes-word");
+				break;
+			}
 		}
 	}
 	
@@ -154,7 +190,7 @@ class RuleContext {
 	constructor() {
 		this.type = "any";
 		this.moderators_exempt = true;
-		this.searchCheck = new SearchCheck([], ["includes"], false, []);
+		this.searchChecks = [];
 		this.is_poll = false;
 		this.is_gallery = false;
 		this.is_edited = false;
@@ -186,10 +222,18 @@ class RuleContext {
 		this.updateHandlers = [];
 	}
 
+	get searchCheck() {
+		console.trace("Read from searchcheck property is invalid!")
+
+	}
+	set searchCheck(a) {
+		console.trace("Write to searchcheck property is invalid!");
+	}
+
 	reset() {
 		this.type = "any";
 		this.moderators_exempt = true;
-		this.searchCheck = new SearchCheck([], ["includes"], false, []);
+		this.searchChecks = [];
 		this.is_poll = false;
 		this.is_gallery = false;
 		this.is_edited = false;
@@ -229,6 +273,8 @@ class RuleContext {
 
 			if (isSearchCheck(entry[0])) {
 				this.searchCheck =  deserialiseSearchCheck(entry[0], entry[1]);
+
+				this.searchChecks.push(deserialiseSearchCheck(entry[0], entry[1]));
 			}
 			else {
 				if (Object.hasOwn(ruleMapping, entry[0])) {
@@ -368,12 +414,9 @@ const readTriggers = {
 	"modmail": (ruleContext) => {
 		ruleContext.send_modmail = true;
 	},
-	//"modmail_subject": this.modmail,
-	
 	"message": (ruleContext) => {
 		ruleContext.send_message = true;
 	},
-	//"message_subject": this.message,
 
 	"comment": (ruleContext) => {
 		ruleContext.send_comment = true;

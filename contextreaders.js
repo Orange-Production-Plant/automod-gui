@@ -42,8 +42,6 @@ function resetCheckListAndTickBox(parentId, checkedValues) {
 	}
 }
 
-
-
 /**
  * 
  * @param {RuleContext} ruleContext 
@@ -108,21 +106,7 @@ function updateMatchText(ruleContext) {
 	}
 }
 
-/**
- * 
- * @param {any[]} list 
- * @param {object} obj 
- * @returns {any[]}
- */
-function objHasTrueKeys(list, obj) {
-	let ret = [];
-	for (let val of list) {
-		if (obj[val]) {
-			ret.push(val);
-		}
-	}
-	return ret;
-}
+
 /**
  * 
  * @param {RuleContext} ruleContext 

@@ -3,14 +3,13 @@
 
 /**
  * 
- * @param {string} inputType 
- * @param {string} inputValue 
- * @param {string[]} inputClassList 
- * @param {string} inputID 
+ * @param {HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement} input
  * @returns {any}
  */
-function defaultTypeMapper(inputType, inputValue, inputClassList = "", inputID = "") {
-	switch (inputType) {
+function defaultTypeMapper(input) {
+	let inputValue = input.value;
+
+	switch (input.type) {
 		case "text": {
 			return inputValue;
 		}
@@ -21,7 +20,8 @@ function defaultTypeMapper(inputType, inputValue, inputClassList = "", inputID =
 			return parseInt(inputValue);
 		}
 		case "checkbox": {
-			return (inputValue == "on");
+			
+			return (input.checked);
 		}
 		default: {
 			return inputValue;
@@ -31,21 +31,23 @@ function defaultTypeMapper(inputType, inputValue, inputClassList = "", inputID =
 
 /**
  * Gets the values of the form elements marked with the provided class name
- * @param {string} className 
+ * @param {HTMLFormElement} form
  * @param {defaultTypeMapper} typeMapper 
  * @returns {object} {element id: value}
  */
-function collectForm(className, typeMapper = defaultTypeMapper) {
-	let inputs = document.getElementsByClassName(className);
+function collectForm(form, typeMapper = defaultTypeMapper) {
 
 	let formObject = {};
-	for (let input of inputs) {
-		if (input.classList.contains("radiogroup")) {
+	for (let input of form.elements) {
 
+		if (input.dataset.value) {
+			if (!formObject[input.dataset.container]) formObject[input.dataset.container] = {}
+			formObject[input.dataset.container][input.dataset.value] = typeMapper(input);
 		}
 		else {
-			formObject[input.id] = typeMapper(input.type, input.value, input.classList, input.id);
+			formObject[input.id] = typeMapper(input);
 		}
+		
 	}
 
 	return formObject;
@@ -108,7 +110,7 @@ class FormListener {
 	}
 
 	readItemtype(event) {
-		this.ruleContext.type = readRadiolist("itemtype");
+		this.ruleContext.type = document.getElementById("itemtype").value;
 		this.ruleContext.update();
 	}
 	

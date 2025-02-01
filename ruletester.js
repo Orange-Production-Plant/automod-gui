@@ -23,7 +23,6 @@ function constructTitle(rootElement) {
 
 	titleLabel.innerText = "Title:"
 	titleLabel.htmlFor = titleInput.id;
-	titleLabel.classList.add("sectionlabel");
 
 	rootElement.appendChild(titleLabel);
 	rootElement.appendChild(document.createElement("br"));
@@ -53,7 +52,6 @@ function constructComment(rootElement) {
 
 	commentLabel.innerText = (rootElement.dataset.id == 0) ? "Top-level comment" : "Reply comment";
 	commentLabel.htmlFor = commentInput.id;
-	commentLabel.classList.add("sectionlabel");
 
 	rootElement.appendChild(commentLabel);
 	rootElement.appendChild(document.createElement("br"));
@@ -79,7 +77,6 @@ function constructPostBody(rootElement) {
 
 	bodyLabel.innerText = "Body:";
 	bodyLabel.htmlFor = bodyInput.id;
-	bodyLabel.classList.add("sectionlabel");
 
 	rootElement.appendChild(bodyLabel);
 	rootElement.appendChild(document.createElement("br"));
@@ -178,12 +175,11 @@ function constructDemoArea(ruleContext) {
 		demoroot.appendChild(document.createElement("br"));
 	
 		let outputContainer = document.createElement("div");
-		let outputHeader = document.createElement("h5");
+		let outputHeader = document.createElement("h4");
 		let output = document.createElement("p");
 	
 		
 		outputHeader.innerText = "Output: ";
-		outputHeader.classList.add("sectionlabel");
 		
 		output.innerText = "~~loading~~";
 		output.id = "output";
@@ -227,7 +223,7 @@ function buildMatchRegex(value, modifiers) {
 	let searchMethod = modifiers.find((val, idx, arr)=>{
 		return Object.keys(regexMethodPairs).includes(val);
 	})
-	if (!searchMethod) throw "Unknown search method!";
+	if (!searchMethod) throw "Unknown search method: " + modifiers;
 
 	let regexString = ""
 
