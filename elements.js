@@ -172,7 +172,7 @@ class SearchCheckElement extends HTMLElement {
 		
 		let formObject = collectForm(form);
 
-		return new SearchCheck(objHasTrueKeys(Object.keys(searchFields), formObject.fields), objHasTrueKeys(Object.keys(searchModifiers), formObject.fields).concat([formObject.searchmethod]), formObject.invert.invert, [formObject.fieldmatch])
+		return new SearchCheck(objHasTrueKeys(Object.keys(searchFields), formObject.fields), formObject.searchmethod,objHasTrueKeys(Object.keys(searchModifiers), formObject.fields), formObject.invert.invert, [formObject.fieldmatch])
 	}
 }
 

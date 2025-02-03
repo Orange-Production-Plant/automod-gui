@@ -83,11 +83,13 @@ class SearchCheck {
 	/**
 	 * 
 	 * @param {string[]} fields 
+	 * @param {string} method
 	 * @param {string[]} modifiers 
 	 * @param {boolean} isInverted 
 	 */
-	constructor (fields, modifiers, isInverted, values) {
+	constructor (fields, method, modifiers, isInverted, values) {
 		this.fields = fields;
+		this.method = method;
 		this.modifiers = modifiers;
 		this.isInverted = isInverted;		
 		this.values = values;
@@ -99,7 +101,7 @@ class SearchCheck {
  */
 function deserialiseSearchCheck(keyString, values) {
 	if (!isSearchCheck(keyString)) throw "Not a search check!";
-	
+
 	let str = keyString.trim()
 	let parts = str.split(/ +/);
 
