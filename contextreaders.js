@@ -47,7 +47,7 @@ function resetCheckListAndTickBox(parentId, checkedValues) {
  * @param {RuleContext} ruleContext 
  */
 function updateItemType(ruleContext) {
-	//resetRadioListAndTickBox("itemtype", ruleContext.type)
+	document.forms.condition.elements.ruleprops.elements.type.value = ruleContext.type;
 }
 
 /**
@@ -55,8 +55,7 @@ function updateItemType(ruleContext) {
  * @param {RuleContext} ruleContext 
  */
 function updateNME(ruleContext) {
-	const checkboxElement = document.getElementById("nme");
-	checkboxElement.checked = !ruleContext.moderators_exempt;
+	document.forms.condition.elements.ruleprops.elements.nme.checked = !ruleContext.moderators_exempt;
 }
 
 
@@ -83,19 +82,12 @@ function updateSearchCheck(ruleContext) {
  */
 function updateMiscChecks(ruleContext) {
 	resetCheckListAndTickBox("misc", objHasTrueKeys(Object.keys(miscList), ruleContext));
-}
-
-/**
- * 
- * @param {RuleContext} ruleContext 
- */
-function updateNumeralChecks(ruleContext) {
-
-
+	
 	for (let check of numeralChecks) {
 		document.getElementById(check).value = ruleContext[check];
 	}
 }
+
 
 /**
  * 

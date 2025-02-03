@@ -12,6 +12,7 @@
 	<script src="ruletester.js" defer></script>
 	<script src="setup.js" defer></script>
 	<script src="index.js" defer></script>
+	<link rel="stylesheet" href="animations.css">
 	<link rel="stylesheet" href="layout.css">
 	<link rel="stylesheet" href="elements.css">
 </head>
@@ -25,7 +26,7 @@
 			<h3>Rules</h3>
 			<div class="listview">
 				<ul id="filelist" class="buttonlist">
-					<!--fills with filename-->
+					<!--fills with filenames-->
 				</ul>
 			</div>
 		</section>
@@ -34,22 +35,22 @@
 				<h3>Conditions</h3>
 				<form id="condition">
 					<div> <!-- First column -->
-						<fieldset>
+						<fieldset id="ruleprops">
 							<legend>Rule properties</legend>
 							<label for="itemtype">Submission type to match</label><br>
-							<select is="drop-down" id="itemtype" data-list="itemtype"></select><br>
+							<select is="drop-down" id="type" data-list="itemtype"></select><br>
 							<br>
 							<input id="nme" name="nme" class="checklist-button" type="checkbox"><label for="nme" class="checklist-label">Apply to moderators</label>
 						</fieldset>
 					</div>
 					<div> <!-- Second column -->
-						<fieldset >
+						<fieldset id="scfieldset">
 							<legend>Content search</legend>
 							<div id="searchchecks" data-n="0"></div>
 						</fieldset>
 					</div>
 					<div> <!-- Third column -->
-						<fieldset>
+						<fieldset id="miscchecks">
 							<legend>Miscellaneous checks</legend>
 							<div class="listview">
 								<ul is="check-list" id="misc" data-list="miscprops"></ul>
@@ -71,7 +72,7 @@
 				<h3>Actions</h3>
 				<form id="actionform">
 					<div> <!-- First column -->
-						<fieldset>
+						<fieldset id="itemactions">
 							<legend>Submission actions</legend>
 							<label for="action">Action to apply</label><br>
 							<select id="action">
@@ -83,7 +84,7 @@
 								<option id="action-report" value="report">Report</option>
 							</select>
 							<br><br>
-							<label  for="action_reason">Reason for action</label><br>
+							<label for="action_reason">Reason for action</label><br>
 							<textarea id="action_reason" name="action_reason" cols="30" rows="4"></textarea>
 							<br>
 							<br>
@@ -98,7 +99,7 @@
 						</fieldset>
 					</div>
 					<div> <!-- Second column-->
-						<fieldset>
+						<fieldset id="usernotifs">
 							<legend>User notification</legend>
 							<input id="send_comment" name="send_comment" class="checklist-button" type="checkbox"><label for="send_comment" class="checklist-label">Leave comment in reply</label><br>
 							<label for="comment" class="shifttop">Comment body</label>
@@ -110,23 +111,23 @@
 							<br>
 							<input id="send_message" name="send_message" class="checklist-button" type="checkbox"><label for="send_message" class="checklist-label">Send message to user</label>
 							<label for="message_subject" class="shifttop">Subject</label>
-							<textarea id="message_subject" name="message_subject" cols="30" rows="4"></textarea><br>
+							<textarea id="message_subject" name="message_subject" cols="30" rows="1"></textarea><br>
 							<br>
 							<label for="message">Body</label><br>
 							<textarea id="message" name="message" cols="30" rows="4"></textarea>
 						</fieldset>
 					</div>
 					<div>
-						<fieldset>
+						<fieldset id="modnotifs">
 							<legend>Moderator notification</legend>
 							<input id="send_modmail" name="send_modmail" class="checklist-button" type="checkbox"><label for="send_modmail" class="checklist-label">Send modmail to moderators</label>
 							<label for="modmail_subject" class="shifttop">Subject</label>
-							<textarea id="modmail_subject" name="modmail_subject" cols="30" rows="4"></textarea><br>
+							<textarea id="modmail_subject" name="modmail_subject" cols="30" rows="1"></textarea><br>
 							<br>
 							<label for="modmail">Body</label><br>
 							<textarea id="modmail" name="modmail" cols="30" rows="4"></textarea>
 						</fieldset>	
-						<button id="save">Save</button>
+						<!--<button id="save">Save</button>-->
 					</div>
 				</form>
 			</div>
@@ -137,6 +138,7 @@
 		</section>
 	</main>
 	<template id="sctemplate">
+		<link rel="stylesheet" href="animations.css">
 		<link rel="stylesheet" href="layout.css">
 		<link rel="stylesheet" href="elements.css">
 		<form id="searchcheck">

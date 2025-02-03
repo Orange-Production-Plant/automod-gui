@@ -145,11 +145,11 @@ function deserialiseSearchCheck(keyString, values) {
 	let isInverted = false;
 	if (fieldstring.startsWith("~")) {
 		isInverted = true;	
-		fieldstring = fieldstring.substring(fields.indexOf("~") + 1);
+		fieldstring = fieldstring.substring(fieldstring.indexOf("~") + 1);
 	}
 
 	// some rules may have multiple searchchecks for the same fields; trim away the numeral indicator
-	fieldstring.replace(/#\\d+/, "");
+	fieldstring = fieldstring.replace(/#\d+/, "");
 
 	// turn the fieldstring into an array
 	let fields = fieldstring.split("+");
@@ -183,7 +183,6 @@ function deserialiseSearchCheck(keyString, values) {
 	else {
 		valuesArr = values;
 	}
-	console.log(fields,method,modifiers,isInverted,valuesArr)
 	
 	return new SearchCheck(fields, method, modifiers, isInverted, valuesArr);
 }

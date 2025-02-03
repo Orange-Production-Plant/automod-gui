@@ -1,3 +1,7 @@
+:root {
+    interpolate-size: allow-keywords;
+}
+
 * {
 	font-family: 'Courier New', Courier, monospace;
 	padding: 0;
@@ -78,11 +82,15 @@ h4, label {
 .dropdown {
 	height: 2em; 
 	overflow-y: hidden;
+
+	transition: height 0.15s ease;
 }
 
+
 .dropdown:hover {
+	/*overflow-y: auto;*/
 	height: auto;
-	overflow-y: auto;
+	box-shadow: 0.1em 0.1em 0.4em rgba(0 0 0 / 0.6);
 }
 
 .buttonlist {

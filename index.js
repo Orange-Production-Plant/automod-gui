@@ -38,6 +38,8 @@ function selectFile(event) {
 }
 
 function saveToFile(event) {
+	console.log(ruleContext.redditise());
+	throw "saving is unsafe";
 	fs.writeFileSync((path.join(sourcePath, fileList[selectedFile].join("."))), yaml.stringify(ruleContext.redditise()));
 }
 
@@ -87,7 +89,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 	
 	selectFile({target:{dataset:{index:0}}})
 	
-	document.getElementById("save").addEventListener("click", saveToFile);
+	//document.getElementById("save").addEventListener("click", saveToFile);
 	
 	rcStore = ruleContext;
 })

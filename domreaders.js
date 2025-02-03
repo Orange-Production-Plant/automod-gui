@@ -20,7 +20,6 @@ function defaultTypeMapper(input) {
 			return parseInt(inputValue);
 		}
 		case "checkbox": {
-			
 			return (input.checked);
 		}
 		default: {
@@ -36,68 +35,54 @@ function defaultTypeMapper(input) {
  * @returns {object} {element id: value}
  */
 function collectForm(form, typeMapper = defaultTypeMapper) {
-
 	let formObject = {};
 	for (let input of form.elements) {
-
-		if (input.dataset.value) {
-			if (!formObject[input.dataset.container]) formObject[input.dataset.container] = {}
-			formObject[input.dataset.container][input.dataset.value] = typeMapper(input);
+		if (input.tagName == "FIELDSET") {
+			// do nothing
 		}
 		else {
-			formObject[input.id] = typeMapper(input);
+			if (input.dataset.value) {
+				//if (!formObject[input.dataset.container]) formObject[input.dataset.container] = {}
+				formObject[input.dataset.value] = typeMapper(input);
+			}
+			else {
+				formObject[input.id] = typeMapper(input);
+			}
 		}
-		
 	}
-
 	return formObject;
 }
 
-function clearForm(className) {
-	let inputs = document.getElementsByClassName(className);
-	for (let input of inputs) {
-		input.value = "";
+
+
+
+
+
+
+function readConditionForm(ruleContext) {
+	let form = document.forms.condition;
+	let formObject = collectForm;
+
+	for (let [key, value] of Object.entries(formObject)) {
+		if (Object.hasOwn(ruleContext, key)) {
+			ruleContext[key] = value;
+		}
 	}
+
+	ruleContext.moderators_exempt = !formObject.nme;
+
+	let searchCheckContainer = document.getElementById("searchchecks");
+
+	for (let element of searchCheckContainer.children) {
+		ruleContext.searchChecks[element.dataset.index] = element.getValue();
+	}
+
 }
 
 
 
 
 
-/**
- * 
- * @param {string} parentId 
- * @param {string[]} childIds 
- */
-function attachChecklistListeners(parentId, childIds, listener) {
-
-	for (let id of childIds) {
-		let element = document.getElementById(parentId + "-" + id);
-		element.addEventListener("change", listener);
-	}
-}
-
-
-
-function readChecklist(parentId) {
-
-	let rootElement = document.getElementById(parentId);
-
-	let ret = {}
-	for (let element of rootElement.childNodes) {
-		ret[element.dataset.value] = element.childNodes[0].checked;
-	}
-	return ret;
-}
-
-function readRadiolist(parentId) {
-
-	let checklist = readChecklist(parentId);
-
-	for (let id in checklist) {
-		if (checklist[id]) return id;
-	}
-}
 
 
 class FormListener {

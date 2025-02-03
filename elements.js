@@ -146,7 +146,6 @@ function objHasTrueKeys(list, obj) {
 	}
 	return ret;
 }
-let temp1;
 
 class SearchCheckElement extends HTMLElement {
 	constructor() {
@@ -161,7 +160,8 @@ class SearchCheckElement extends HTMLElement {
 
 		const shadowRoot = this.attachShadow({mode:"open"});
 		shadowRoot.appendChild(template.content.cloneNode(true));
-		temp1 = this;
+
+		this.style.zIndex = this.parentElement.dataset.n - this.dataset.index;
 	}
 
 	getValue() {
@@ -172,7 +172,7 @@ class SearchCheckElement extends HTMLElement {
 		
 		let formObject = collectForm(form);
 
-		return new SearchCheck(objHasTrueKeys(Object.keys(searchFields), formObject.fields), formObject.searchmethod,objHasTrueKeys(Object.keys(searchModifiers), formObject.fields), formObject.invert.invert, [formObject.fieldmatch])
+		return new SearchCheck(objHasTrueKeys(Object.keys(searchFields), formObject), formObject.searchmethod,objHasTrueKeys(Object.keys(searchModifiers), formObject), formObject.invert, [formObject.fieldmatch])
 	}
 
 	/**

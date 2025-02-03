@@ -134,7 +134,10 @@ let currentType = "";
  */
 function constructDemoArea(ruleContext) {
 	if (ruleContext.type != currentType) {
-		let demoroot = document.getElementById("demoroot");
+		/**
+		 * @type {HTMLFormElement}
+		 */
+		let demoroot = document.forms.demoroot;
 		
 		demoroot.replaceChildren();
 		maxComment = 0;
@@ -204,26 +207,21 @@ function escapeRegExp(string) {
 /**
  * 
  * @param {string} values 
- * @param {string[]} modifiers 
+ * @param {SearchCheck} searchCheck 
  */
-function buildMatchRegex(value, modifiers) {
+function buildMatchRegex(value, searchCheck) {
 
-	let caseSensitive = modifiers.includes("case-sensitive");
-	let isRegex = modifiers.includes("regex");
+	let caseSensitive = searchCheck.modifiers.includes("case-sensitive");
+	let isRegex = searchCheck.modifiers.includes("regex");
 
 	let regexMethodPairs = {
 		"includes": ["", ""],
-		"includes-word": ["\\b", "\\b"],
+		"includes-word": ["(?<=^|\\s)", "(?=$|\\s)"],
 		"starts-with": ["^", ""],
 		"ends-with": ["", "$"],
 		"full-exact": ["^", "$"],
 		"full-text": ["[\\s\\.\\!\\?]*^", "$[\\s\\.\\!\\?]*"]
 	}
-
-	let searchMethod = modifiers.find((val, idx, arr)=>{
-		return Object.keys(regexMethodPairs).includes(val);
-	})
-	if (!searchMethod) throw "Unknown search method: " + modifiers;
 
 	let regexString = ""
 
@@ -234,13 +232,11 @@ function buildMatchRegex(value, modifiers) {
 		regexString = escapeRegExp(value);
 	}
 
-	let regexMethodPair = regexMethodPairs[searchMethod];
+	let regexMethodPair = regexMethodPairs[searchCheck.method];
 
 	regexString = regexMethodPair[0] + regexString + regexMethodPair[1];
 
-
 	return new RegExp(regexString, (caseSensitive) ? "" : "i");
-	
 }
 
 
@@ -269,8 +265,7 @@ function mapFieldToForm(field, type) {
  * @param {RuleContext} ruleContext 
  */
 function testRule(ruleContext) {
-	let form = document.getElementById("demoroot");
-	let formObject = collectForm(form);
+	let formObject = collectForm(document.forms.demoroot);
 
 	for (let id of Object.keys(formObject)) {
 		let e = document.getElementById(id + "-container");
@@ -292,30 +287,64 @@ function testRule(ruleContext) {
  * @returns 
  */
 function testSearchCheck(ruleContext, form) {
-	let matchedElements = [];
-
+	/**
+	 * @type {Object.<string, any[]>}
+	 */
+	let formElementsMatched = {};
+	
+	let scIndex = 0;
 	for (let searchCheck of ruleContext.searchChecks) {
 		for (let field of searchCheck.fields) {
 			let formElements = mapFieldToForm(field, currentType);
 			for (let formElement of formElements) {
 				if (Object.hasOwn(form, formElement)) {
 					for (let value of searchCheck.values) {
-						let regex = buildMatchRegex(value, searchCheck.modifiers);
+						let regex = buildMatchRegex(value, searchCheck);
 						let result = regex.exec(form[formElement]);
 						if (!searchCheck.isInverted){
 							if (result) {
-								matchedElements.push(formElement);
+								if (!formElementsMatched[formElement]) formElementsMatched[formElement] = [];
+								formElementsMatched[formElement].push(scIndex);
 							}
 						}
 						else {
 							if (!result) {
-								matchedElements.push(formElement);
+								if (!formElementsMatched[formElement]) formElementsMatched[formElement] = [];
+								formElementsMatched[formElement].push(scIndex);
 							}
 						}
 					}
 				}
 			}
 		}
+		scIndex++;
+	}
+	
+
+	let matchedElements = [];
+
+	for (let key in formElementsMatched) {
+		let seen = [];
+		let a = formElementsMatched[key].filter((val, idx, arr) => {
+			if (!seen.includes(val)) {
+				seen.push(val);
+				return true;
+			}
+			return false;
+		}).sort();
+
+
+		let max = 0;
+		for (let i = 0; i < a.length; i++) {
+			if (a[i] != i) {
+				break;
+			}
+			max = i;
+		}
+		if (max == ruleContext.searchChecks.length - 1) {
+			matchedElements.push(key);
+		}
+
 	}
 	return matchedElements;
 }
