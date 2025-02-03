@@ -269,14 +269,15 @@ function mapFieldToForm(field, type) {
  * @param {RuleContext} ruleContext 
  */
 function testRule(ruleContext) {
-	let form = collectForm("demoform");
+	let form = document.getElementById("demoroot");
+	let formObject = collectForm(form);
 
-	for (let id of Object.keys(form)) {
+	for (let id of Object.keys(formObject)) {
 		let e = document.getElementById(id + "-container");
 		e.style.backgroundColor = "transparent";
 	}
 
-	let matchedElements = testSearchCheck(ruleContext, form);
+	let matchedElements = testSearchCheck(ruleContext, formObject);
 
 	for (let id of matchedElements) {
 		let e = document.getElementById(id + "-container");
@@ -293,21 +294,23 @@ function testRule(ruleContext) {
 function testSearchCheck(ruleContext, form) {
 	let matchedElements = [];
 
-	for (let field of ruleContext.searchCheck.fields) {
-		let formElements = mapFieldToForm(field, currentType);
-		for (let formElement of formElements) {
-			if (Object.hasOwn(form, formElement)) {
-				for (let value of ruleContext.searchCheck.values) {
-					let regex = buildMatchRegex(value, ruleContext.searchCheck.modifiers);
-					let result = regex.exec(form[formElement]);
-					if (!ruleContext.searchCheck.isInverted){
-						if (result) {
-							matchedElements.push(formElement);
+	for (let searchCheck of ruleContext.searchChecks) {
+		for (let field of searchCheck.fields) {
+			let formElements = mapFieldToForm(field, currentType);
+			for (let formElement of formElements) {
+				if (Object.hasOwn(form, formElement)) {
+					for (let value of searchCheck.values) {
+						let regex = buildMatchRegex(value, searchCheck.modifiers);
+						let result = regex.exec(form[formElement]);
+						if (!searchCheck.isInverted){
+							if (result) {
+								matchedElements.push(formElement);
+							}
 						}
-					}
-					else {
-						if (!result) {
-							matchedElements.push(formElement);
+						else {
+							if (!result) {
+								matchedElements.push(formElement);
+							}
 						}
 					}
 				}

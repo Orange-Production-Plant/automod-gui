@@ -95,6 +95,39 @@ class SearchCheck {
 		this.values = values;
 	}
 }
+
+
+function identifySearchMethod(fields) {
+	if (fields.length > 1) {
+		return "includes-word";
+	}
+	else {
+		switch(fields[0]) {
+			case "domain":
+				// approximation; this is technically supposed to be a special check for domains only
+				return "full-exact";
+			case "id":
+				return "full-exact";
+			case "url":
+				return "includes";
+			case "flair_text":
+				return "full-exact";
+			case "flair_css_class":
+				return "full-exact";
+			case "flair_template_id":
+				return "full-exact";
+			case "media_author":
+				return "full-exact";
+			case "media_author_url":
+				return "full-exact";
+			default:
+				return "includes-word";
+		}
+	}
+	
+}
+
+
 /**
  * 
  * @param {string} keyString 
@@ -102,66 +135,46 @@ class SearchCheck {
 function deserialiseSearchCheck(keyString, values) {
 	if (!isSearchCheck(keyString)) throw "Not a search check!";
 
-	let str = keyString.trim()
-	let parts = str.split(/ +/);
+	// remove extraneous whitespace and split keystring by condensed space (i.e. many spaces are counted as one)
+	let parts = keyString.trim().split(/ +/);
 
-	let fields = parts[0];
+	// the first bit should be the fields concatenated with pluses
+	let fieldstring = parts[0];
 
+	// if this check is inverted, the fieldstring starts with a tilde
 	let isInverted = false;
-	if (fields.startsWith("~")) {
+	if (fieldstring.startsWith("~")) {
 		isInverted = true;	
-		fields = fields.substring(fields.indexOf("~") + 1);
+		fieldstring = fieldstring.substring(fields.indexOf("~") + 1);
 	}
 
-	fields = fields.split("+");
+	// some rules may have multiple searchchecks for the same fields; trim away the numeral indicator
+	fieldstring.replace(/#\\d+/, "");
+
+	// turn the fieldstring into an array
+	let fields = fieldstring.split("+");
+
+	// get modifier list (may include method)
 	let modifiers = [];
 	if (parts.length > 1) {
 		modifiers = parts[1].substring(1,parts[1].length - 1).split(",");
 		modifiers = modifiers.map((element)=>{return element.trim();})
 	}
 
-	let isM = false;
-	for (let m of modifiers) {
-		if (Object.hasOwn(searchMethods, m)) {
-			isM = true;
+	// figure out if a method is specified
+	let method = "";
+	modifiers.filter((val, idx, arr) => {
+		let isMethod = !Object.keys(searchMethods).includes(val);
+		if (isMethod) {
+			method = val;
 		}
+		return !isMethod;
+	});
+	
+	if (!method) {
+		method = identifySearchMethod(fields);
 	}
-	if (!isM) {
-		if (fields.length > 1) {
-			modifiers.push("includes-word");
-		}
-		else {
-			switch(fields[0]) {
-				case "domain":
-					modifiers.push("full-exact");
-				break;
-				case "id":
-					modifiers.push("full-exact");
-				break;
-				case "url":
-					modifiers.push("includes");
-				break;
-				case "flair_text":
-					modifiers.push("full-exact");
-				break;
-				case "flair_css_class":
-					modifiers.push("full-exact");
-				break;
-				case "flair_template_id":
-					modifiers.push("full-exact");
-				break;
-				case "media_author":
-					modifiers.push("full-exact");
-				break;
-				case "media_author_url":
-					modifiers.push("full-exact");
-				break;
-				default:
-					modifiers.push("includes-word");
-				break;
-			}
-		}
-	}
+	
 	
 	let valuesArr = [];
 	if (typeof values == "string") {
@@ -170,8 +183,9 @@ function deserialiseSearchCheck(keyString, values) {
 	else {
 		valuesArr = values;
 	}
+	console.log(fields,method,modifiers,isInverted,valuesArr)
 	
-	return new SearchCheck(fields, modifiers, isInverted, valuesArr);
+	return new SearchCheck(fields, method, modifiers, isInverted, valuesArr);
 }
 
 const typeNameMapping = {
@@ -274,8 +288,6 @@ class RuleContext {
 			}
 
 			if (isSearchCheck(entry[0])) {
-				this.searchCheck =  deserialiseSearchCheck(entry[0], entry[1]);
-
 				this.searchChecks.push(deserialiseSearchCheck(entry[0], entry[1]));
 			}
 			else {

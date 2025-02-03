@@ -174,6 +174,42 @@ class SearchCheckElement extends HTMLElement {
 
 		return new SearchCheck(objHasTrueKeys(Object.keys(searchFields), formObject.fields), formObject.searchmethod,objHasTrueKeys(Object.keys(searchModifiers), formObject.fields), formObject.invert.invert, [formObject.fieldmatch])
 	}
+
+	/**
+	 * 
+	 * @param {SearchCheck} searchCheck 
+	 */
+	setValue(searchCheck) {
+		/**
+		 * @type {HTMLFormElement}
+		 */
+		let form = this.shadowRoot.getElementById("searchcheck");
+
+		for (let element of form.elements) {
+			if (element.type == "checkbox") {
+				if (searchCheck.fields.includes(element.dataset.value)) {
+					element.checked = true;
+				}
+				else if (searchCheck.modifiers.includes(element.dataset.value)) {
+					element.checked = true;
+				}
+				else if (element.dataset.value == "invert") {
+					element.checked = searchCheck.isInverted;
+				}
+				else {
+					element.checked = false;
+				}
+			}
+			else {
+				if (element.id == "searchmethod") {
+					element.value = searchCheck.method;
+				}
+				else {
+					element.value = searchCheck.values[0];
+				}
+			}
+		}
+	}
 }
 
 

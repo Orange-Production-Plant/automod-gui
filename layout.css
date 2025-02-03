@@ -17,7 +17,7 @@
     column-gap: 2em;
 }
 
-#searchingchecks {
+#searchchecks {
     display: grid;
     grid-auto-rows: auto;
 }

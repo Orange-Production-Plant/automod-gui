@@ -59,50 +59,20 @@ function updateNME(ruleContext) {
 	checkboxElement.checked = !ruleContext.moderators_exempt;
 }
 
-/**
- * 
- * @param {RuleContext} ruleContext 
- */
-function updateFields(ruleContext) {
-	resetCheckListAndTickBox("fields", ruleContext.searchCheck.fields);
-}
-/**
- * 
- * @param {RuleContext} ruleContext 
- */
-function updateSearchMethod(ruleContext) {
-	let combinableModifiers = [];
-
-	for (let modifier of ruleContext.searchCheck.modifiers) {
-		if (Object.hasOwn(searchModifiers, modifier)) {
-			combinableModifiers.push(modifier);
-		}
-		else if (Object.hasOwn(searchMethods, modifier)) {
-			//resetRadioListAndTickBox("matchtype", modifier);
-		}
-		else {
-			throw "Fundamental error! " + modifier;
-		}
-	}
-
-	resetCheckListAndTickBox("matchmodifier", combinableModifiers);
-
-	const invertCheckbox = document.getElementById("invert-invert");
-	invertCheckbox.checked = ruleContext.searchCheck.isInverted;
-}
 
 /**
  * 
  * @param {RuleContext} ruleContext 
  */
-function updateMatchText(ruleContext) {
-	let textArea = document.getElementById("fieldmatch");
-	let vals = ruleContext.searchCheck.values;
-	if (vals.length > 0) {
-		textArea.innerText = vals[0];
-	}
-	else {
-		textArea.innerText = "";
+function updateSearchCheck(ruleContext) {
+	buildSearchChecks(ruleContext.searchChecks.length);
+
+	let container = document.getElementById("searchchecks");
+	
+	for (let element of container.children) {
+		if (element.dataset.index) {
+			element.setValue(ruleContext.searchChecks[element.dataset.index]);
+		}
 	}
 }
 

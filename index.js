@@ -83,8 +83,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
 	let formListener = new FormListener(ruleContext);
 
-	//createLists(formListener);
-	//addChecklistListeners(ruleContext, formListener);
+	addContextListeners(ruleContext);
 	
 	selectFile({target:{dataset:{index:0}}})
 	
