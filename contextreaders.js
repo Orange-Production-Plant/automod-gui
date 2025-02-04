@@ -2,27 +2,6 @@
 /**
  * 
  * @param {string} parentId 
- * @param {string} checkedValue 
- */
-function resetRadioListAndTickBox(parentId, checkedValue) {
-	const rootElement = document.getElementById(parentId);
-
-	for (let element of rootElement.childNodes) {
-		element.childNodes[0].checked = false;
-	}
-
-	/**
-	 * @type {HTMLInputElement}
-	 */
-	const checkboxElement = document.getElementById(parentId + "-" + checkedValue);
-	if (!checkboxElement) throw parentId + "-" + checkedValue + "is not a valid type id!!!"
-
-	checkboxElement.checked = true;
-}
-
-/**
- * 
- * @param {string} parentId 
  * @param {string[]} checkedValues 
  */
 function resetCheckListAndTickBox(parentId, checkedValues) {

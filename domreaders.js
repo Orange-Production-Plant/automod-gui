@@ -54,14 +54,9 @@ function collectForm(form, typeMapper = defaultTypeMapper) {
 }
 
 
-
-
-
-
-
 function readConditionForm(ruleContext) {
 	let form = document.forms.condition;
-	let formObject = collectForm;
+	let formObject = collectForm(form);
 
 	for (let [key, value] of Object.entries(formObject)) {
 		if (Object.hasOwn(ruleContext, key)) {
@@ -76,101 +71,21 @@ function readConditionForm(ruleContext) {
 	for (let element of searchCheckContainer.children) {
 		ruleContext.searchChecks[element.dataset.index] = element.getValue();
 	}
+}
 
+
+function readActionForm(ruleContext) {
+	let form = document.forms.actionform;
+	let formObject = collectForm(form);
+	
+	for (let [key, value] of Object.entries(formObject)) {
+		if (Object.hasOwn(ruleContext, key)) {
+			ruleContext[key] = value;
+		}
+	}
 }
 
 
 
 
 
-
-
-class FormListener {
-	/**
-	 * 
-	 * @param {RuleContext} ruleContext 
-	 */
-	constructor(ruleContext) {
-		this.ruleContext = ruleContext;
-	}
-
-	readItemtype(event) {
-		this.ruleContext.type = document.getElementById("itemtype").value;
-		this.ruleContext.update();
-	}
-	
-	readFields(event) {
-		this.ruleContext.searchCheck.fields = objHasTrueKeys(Object.keys(searchFields),readChecklist("fields"));
-		this.ruleContext.update();
-	}
-	
-	readSearchMethod(event) {
-		this.ruleContext.searchCheck.modifiers = objHasTrueKeys(["case-sensitive", "regex"], readChecklist("matchmodifier"));
-		this.ruleContext.searchCheck.modifiers.push(readRadiolist("matchtype"));
-		this.ruleContext.update();
-	}
-
-	readMiscChecks(event) {
-		let miscChecklistObj = readChecklist("misc");
-		
-		for (let box of Object.keys(miscChecklistObj)) {
-			this.ruleContext[box] = miscChecklistObj[box];
-		}
-		this.ruleContext.update();
-	}
-
-	readMiniactions(event) {
-		let miniactionsChecklistObj = readChecklist("miniactions");
-		
-		for (let box of Object.keys(miniactionsChecklistObj)) {
-			this.ruleContext[box] = miniactionsChecklistObj[box];
-		}
-		this.ruleContext.update();
-	}
-
-	/**
-	 * 
-	 * @param {InputEvent} event 
-	 */
-	readTextInput(event) {
-		/**
-		 * @type {HTMLInputElement}
-		 */
-		let target = event.target;
-		this.ruleContext[target.id] = defaultTypeMapper(target.type, target.value);
-		this.ruleContext.update();
-	}
-	/**
-	 * 
-	 * @param {Event} event 
-	 */
-	readCheckboxInput(event) {
-		/**
-		 * @type {HTMLInputElement}
-		 */
-		let target = event.target;
-		this.ruleContext[target.id] = target.checked;
-		this.ruleContext.update();
-	}
-
-	// reflectively called
-	readnme(event) {
-		let nmeCheckbox = document.getElementById("nme");
-		this.ruleContext.moderators_exempt = !nmeCheckbox.checked;
-		this.ruleContext.update();
-	}
-	readfieldmatch(event) {
-		this.ruleContext.searchCheck.values = [];
-		this.ruleContext.searchCheck.values.push(document.getElementById("fieldmatch").value);
-		this.ruleContext.update();
-	}
-	readinvert(event) {
-		this.ruleContext.searchCheck.isInverted = document.getElementById("invert-invert").checked;
-		this.ruleContext.update();
-	}
-	
-	
-
-
-}
-	

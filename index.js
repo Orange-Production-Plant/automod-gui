@@ -83,10 +83,23 @@ window.addEventListener("DOMContentLoaded", ()=>{
 	window.nativeapis.on("folderSelected", folderSelectedCallback)
 	*/
 
-	let formListener = new FormListener(ruleContext);
-
 	addContextListeners(ruleContext);
 	
+	/**
+	 * @type {HTMLFormElement}
+	 */
+	let conditionForm = document.forms.condition;
+	/**
+	 * @type {HTMLFormElement}
+	 */
+	let actionForm = document.forms.actionform;
+
+	conditionForm.addEventListener("input", (event)=>{readConditionForm(ruleContext)});
+	conditionForm.addEventListener("change", (event)=>{readConditionForm(ruleContext)});
+	actionForm.addEventListener("input", (event)=>{readActionForm(ruleContext)});
+	actionForm.addEventListener("change", (event)=>{readActionForm(ruleContext)});
+
+
 	selectFile({target:{dataset:{index:0}}})
 	
 	//document.getElementById("save").addEventListener("click", saveToFile);

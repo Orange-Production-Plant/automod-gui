@@ -17,8 +17,6 @@ function buildSearchChecks(n) {
 
 
 
-
-
 function addContextListeners(ruleContext) {
 	ruleContext.on("update", updateItemType);
 	ruleContext.on("update", updateNME);
