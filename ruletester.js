@@ -3,6 +3,7 @@
 let rcStore = {};
 
 function onDemoUpdate() {
+	console.log("i get called");
 	testRule(rcStore);
 }
 
@@ -163,7 +164,7 @@ function constructDemoArea(ruleContext) {
 			break;
 			case "comment":
 			{
-				constructComment(demoroot);
+				constructCommentArea(demoroot);
 			}
 			break;
 			
