@@ -330,25 +330,38 @@ class RuleContext {
 	
 			outObj.type = revTypeNameMapping[this.type];
 		},
-		"searchCheck":(ruleContext, out) =>{
-			if (ruleContext.searchCheck.fields.length > 0) {
-				let fieldString = ruleContext.searchCheck.fields.join("+");
-				let ret = (ruleContext.searchCheck.isInverted) ? "~" : "";
+		"searchChecks":(ruleContext, out) =>{
 
-				ret += fieldString;
+			let fieldStrings = {};;
+
+			for (let searchCheck of ruleContext.searchChecks) {
 				
-				if (ruleContext.searchCheck.modifiers.length > 1) {
-					let necessaryModifiers = [];
-					for (let modifier of ruleContext.searchCheck.modifiers) {
-						if (!((modifier == "includes" && ruleContext.searchCheck.fields.length == 1) || (modifier == "includes-word" && ruleContext.searchCheck.fields > 1))) {
-							necessaryModifiers.push(modifier);
-						}
+				if (searchCheck.fields.length > 0) {
+					if (searchCheck.values.length < 1) throw "invalid searchcheck";
+
+					let ret = (searchCheck.isInverted) ? "~" : "";
+					let fieldString = searchCheck.fields.join("+");
+					ret += fieldString;
+					
+
+					let necessaryModifiers = searchCheck.modifiers.slice();
+					if (searchCheck.method != identifySearchMethod(searchCheck.fields)) {
+						necessaryModifiers.push(searchCheck.method);
+					}
+					ret += (necessaryModifiers.length) ? " (" + necessaryModifiers.join(", ") + ")" : "";
+
+					fieldString = ((searchCheck.isInverted) ? "~" : "") + fieldString;
+					if (Object.keys(fieldStrings).includes(fieldString)) {
+						fieldStrings[fieldString]++;
+						ret += "#" + fieldStrings[fieldString];
+					}
+					else {
+						fieldStrings[fieldString] = 1;
 					}
 
-					ret += " (" + necessaryModifiers.join(", ") + ")";
-				}
 
-				out[ret] = ruleContext.searchCheck.values;
+					out[ret] = (searchCheck.values.length > 1) ? searchCheck.values : searchCheck.values[0];
+				}
 			}
 			
 		},
@@ -388,7 +401,29 @@ class RuleContext {
 		"set_flair": noop
 		};
 
-		for (let id in this) {
+
+		let sortedThis = Object.keys(this).sort((a, b) => {
+			let actions = [];
+			for (let formElement of document.forms.actionform.elements) {
+				actions.push((formElement.dataset.value) ? formElement.dataset.value : formElement.id);
+			}
+
+			let priority = ["type"];
+
+			let aIdx = priority.indexOf(a);
+			let bIdx = priority.indexOf(b);
+
+			if (aIdx != bIdx) {
+				return bIdx - aIdx;
+			}
+			
+			
+			if (actions.includes(a) && !actions.includes(b)) return 1;
+			else if (!actions.includes(a) && actions.includes(b)) return -1;
+			else return a.localeCompare(b);
+		})
+
+		for (let id of sortedThis) {
 			if (!(this[id] == defaultContext[id])) {
 				if (Object.hasOwn(specialHandlers, id)) {
 					specialHandlers[id](this,outObj);

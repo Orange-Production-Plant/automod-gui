@@ -90,7 +90,7 @@ h4, label {
 .dropdown:hover {
 	/*overflow-y: auto;*/
 	height: auto;
-	box-shadow: 0.1em 0.1em 0.4em rgba(0 0 0 / 0.6);
+	/*box-shadow: 0.1em 0.1em 0.4em rgba(0 0 0 / 0.6);*/
 }
 
 .buttonlist {

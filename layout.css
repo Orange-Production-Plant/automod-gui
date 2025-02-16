@@ -19,7 +19,7 @@
 
 #searchchecks {
     display: grid;
-    grid-auto-rows: max(10vh);
+    /*grid-auto-rows: max(10vh);*/
     row-gap: 1em;
 }
 
