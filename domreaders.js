@@ -69,6 +69,8 @@ function readConditionForm(ruleContext) {
 	let searchCheckContainer = document.getElementById("searchchecks");
 
 	for (let element of searchCheckContainer.children) {
+		if (element.classList.contains("centrecontents")) continue;
+
 		ruleContext.searchChecks[element.dataset.index] = element.getValue();
 	}
 }

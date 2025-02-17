@@ -162,6 +162,11 @@ class SearchCheckElement extends HTMLElement {
 		shadowRoot.appendChild(template.content.cloneNode(true));
 
 		this.style.zIndex = this.parentElement.dataset.n - this.dataset.index;
+
+		this.shadowRoot.getElementById("removebutton").addEventListener("click", (ev) => {
+			ruleContext.searchChecks.splice(this.dataset.index,1);
+			removeSearchCheckForm(this.dataset.index);
+		})
 	}
 
 	getValue() {
@@ -172,7 +177,9 @@ class SearchCheckElement extends HTMLElement {
 		
 		let formObject = collectForm(form);
 
-		return new SearchCheck(objHasTrueKeys(Object.keys(searchFields), formObject), formObject.searchmethod,objHasTrueKeys(Object.keys(searchModifiers), formObject), formObject.invert, [formObject.fieldmatch])
+		let fieldMatch = formObject.fieldmatch.split("\n").map((val)=>val.replace("\\n", "\n")).filter((v)=>(v != ""));
+
+		return new SearchCheck(objHasTrueKeys(Object.keys(searchFields), formObject), formObject.searchmethod,objHasTrueKeys(Object.keys(searchModifiers), formObject), formObject.invert, fieldMatch)
 	}
 
 	/**
@@ -205,7 +212,7 @@ class SearchCheckElement extends HTMLElement {
 					element.value = searchCheck.method;
 				}
 				else {
-					element.value = searchCheck.values[0];
+					element.value = searchCheck.values.map((val) => val.replaceAll("\n","\\n")).join("\n");
 				}
 			}
 		}

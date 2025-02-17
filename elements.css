@@ -82,13 +82,13 @@ h4, label {
 .dropdown {
 	height: 2em; 
 	overflow-y: hidden;
-
 	transition: height 0.15s ease;
 }
 
 
 .dropdown:hover {
 	/*overflow-y: auto;*/
+	
 	height: auto;
 	/*box-shadow: 0.1em 0.1em 0.4em rgba(0 0 0 / 0.6);*/
 }
@@ -140,4 +140,17 @@ h4, label {
 #save {
 	font-size: large;
 }
-  
+
+
+#removebutton {
+	font-weight: bold;
+	color: rgb(255 0 0 / 0.7)
+}
+
+#removebutton:hover, .removebutton:active {
+	color: rgb(255 0 0)
+}
+
+.bigtext {
+	font-size: 3vw;
+}

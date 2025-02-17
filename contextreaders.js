@@ -43,7 +43,7 @@ function updateNME(ruleContext) {
  * @param {RuleContext} ruleContext 
  */
 function updateSearchCheck(ruleContext) {
-	buildSearchChecks(ruleContext.searchChecks.length);
+	buildSearchCheckForms(ruleContext.searchChecks.length);
 
 	let container = document.getElementById("searchchecks");
 	

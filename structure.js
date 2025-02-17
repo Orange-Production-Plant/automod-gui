@@ -86,12 +86,28 @@ class SearchCheck {
 	 * @param {string} method
 	 * @param {string[]} modifiers 
 	 * @param {boolean} isInverted 
+	 * @param {string[values]} values
 	 */
 	constructor (fields, method, modifiers, isInverted, values) {
+		/**
+		 * @type {string[]}
+		 */
 		this.fields = fields;
+		/**
+		 * @type {string}
+		 */
 		this.method = method;
+		/**
+		 * @type {string[]}
+		 */
 		this.modifiers = modifiers;
+		/**
+		 * @type {boolean}
+		 */
 		this.isInverted = isInverted;		
+		/**
+		 * @type {string[]}
+		 */
 		this.values = values;
 	}
 }
